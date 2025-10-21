@@ -1,0 +1,357 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "${DS_ALIYUN_LOG}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "http_status"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 300
+                    },
+                    {
+                      "color": "red",
+                      "value": 400
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "response_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "response_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "date_time"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "${DS_ALIYUN_LOG}"
+          },
+          "query": "* | where request_url like '%${channelName}%' and client_ip = '${clientIp}' and http_status in (${statusCodes}) | project date_time, client_ip, http_status, request_url, response_time, request_bytes, response_bytes, user_agent, cache_status | order by date_time desc | limit 1000",
+          "queryType": "",
+          "refId": "A"
+        }
+      ],
+      "title": "CDN Logs Table",
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "cdn",
+    "logs",
+    "alibaba"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "aliyun-log-service-datasource",
+          "uid": "${DS_ALIYUN_LOG}"
+        },
+        "definition": "* | distinct channelName | order by channelName asc",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Channel Name",
+        "multi": true,
+        "name": "channelName",
+        "options": [],
+        "query": "* | distinct channelName | order by channelName asc",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "aliyun-log-service-datasource",
+          "uid": "${DS_ALIYUN_LOG}"
+        },
+        "definition": "* | distinct client_ip | order by client_ip asc",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Client IP",
+        "multi": true,
+        "name": "clientIp",
+        "options": [],
+        "query": "* | distinct client_ip | order by client_ip asc",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "200,201,202,204,206,301,302,304,400,401,403,404,500,502,503",
+          "value": "200,201,202,204,206,301,302,304,400,401,403,404,500,502,503"
+        },
+        "datasource": {
+          "type": "aliyun-log-service-datasource",
+          "uid": "${DS_ALIYUN_LOG}"
+        },
+        "definition": "200,201,202,204,206,301,302,304,400,401,403,404,500,502,503",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Status Codes",
+        "multi": true,
+        "name": "statusCodes",
+        "options": [
+          {
+            "selected": true,
+            "text": "200",
+            "value": "200"
+          },
+          {
+            "selected": true,
+            "text": "201",
+            "value": "201"
+          },
+          {
+            "selected": true,
+            "text": "202",
+            "value": "202"
+          },
+          {
+            "selected": true,
+            "text": "204",
+            "value": "204"
+          },
+          {
+            "selected": true,
+            "text": "206",
+            "value": "206"
+          },
+          {
+            "selected": true,
+            "text": "301",
+            "value": "301"
+          },
+          {
+            "selected": true,
+            "text": "302",
+            "value": "302"
+          },
+          {
+            "selected": true,
+            "text": "304",
+            "value": "304"
+          },
+          {
+            "selected": true,
+            "text": "400",
+            "value": "400"
+          },
+          {
+            "selected": true,
+            "text": "401",
+            "value": "401"
+          },
+          {
+            "selected": true,
+            "text": "403",
+            "value": "403"
+          },
+          {
+            "selected": true,
+            "text": "404",
+            "value": "404"
+          },
+          {
+            "selected": true,
+            "text": "500",
+            "value": "500"
+          },
+          {
+            "selected": true,
+            "text": "502",
+            "value": "502"
+          },
+          {
+            "selected": true,
+            "text": "503",
+            "value": "503"
+          }
+        ],
+        "query": "200,201,202,204,206,301,302,304,400,401,403,404,500,502,503",
+        "queryValue": "",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "custom",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "CDN Logs Query Dashboard",
+  "uid": "cdn-logs-query",
+  "version": 1,
+  "weekStart": ""
+}
+

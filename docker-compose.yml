@@ -8,6 +8,7 @@ services:
       - "3000:3000"
     environment:
       - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=aliyun-log-service-datasource
+      - GF_INSTALL_PLUGINS=https://github.com/aliyun/aliyun-log-grafana-datasource-plugin/archive/refs/heads/master.zip;aliyun-log-datasource
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:

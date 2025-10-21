@@ -3,7 +3,7 @@ FROM grafana/grafana:latest
 
 # Set environment variables for plugin loading
 ENV GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=aliyun-log-service-datasource
-ENV GF_INSTALL_PLUGINS=""
+ENV GF_INSTALL_PLUGINS=https://github.com/aliyun/aliyun-log-grafana-datasource-plugin/archive/refs/heads/master.zip;aliyun-log-datasource
 
 # Switch to root to install dependencies
 USER root
@@ -18,12 +18,7 @@ RUN mkdir -p /var/lib/grafana/plugins && \
 # Switch back to grafana user
 USER grafana
 
-# Download and install the Aliyun Log Service plugin
-RUN cd /var/lib/grafana/plugins && \
-    wget https://github.com/aliyun/aliyun-log-grafana-datasource-plugin/archive/refs/heads/master.zip -O aliyun-plugin.zip && \
-    unzip aliyun-plugin.zip && \
-    mv aliyun-log-grafana-datasource-plugin-master aliyun-log-datasource && \
-    rm aliyun-plugin.zip
+# The plugin will be installed automatically via GF_INSTALL_PLUGINS environment variable
 
 # Expose Grafana port
 EXPOSE 3000
