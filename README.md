@@ -1,6 +1,8 @@
 # Grafana with Aliyun Log Service Plugin
 
 This directory contains Docker configuration files to run Grafana with the Aliyun Log Service plugin pre-installed.
+Using this plugin: https://github.com/aliyun/aliyun-log-grafana-datasource-plugin/blob/master/README_EN.md
+
 
 ## Quick Start
 

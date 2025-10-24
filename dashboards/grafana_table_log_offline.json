@@ -1,0 +1,254 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 37,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "cf1y36lza90cge"
+          },
+          "format": 1,
+          "rawSQL": "SELECT\r\n  date_time,\r\n  timezone,\r\n  client_ip,\r\n  proxy_ip,\r\n  response_time,\r\n  referrer,\r\n  http_method,\r\n  request_url,\r\n  http_status,\r\n  request_bytes,\r\n  response_bytes,\r\n  cache_status,\r\n  user_agent,\r\n  file_type,\r\n  access_ip,\r\n    CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END as time\r\nFROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\"\r\nWHERE \r\n  -- Smart partition filtering based on time range (same pattern as other queries)\r\n  (\r\n    -- If querying current year, use year partition\r\n    (year = date_format($__timeFrom(), '%Y') AND year = date_format($__timeTo(), '%Y')) OR\r\n    -- If spanning years, include both years\r\n    (year = date_format($__timeFrom(), '%Y') OR year = date_format($__timeTo(), '%Y')) OR\r\n    -- If querying within same year, include that year\r\n    (year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y'))\r\n  )\r\n  -- Time range filtering with timezone adjustment (-8 hours for UTC+8 to UTC)\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) >= $__timeFrom()\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) <= $__timeTo()\r\n  -- Filter\r\nAND (\r\n  COALESCE('${client_ip}', '') = ''\r\n  OR POSITION(',' || CAST(client_ip AS VARCHAR) || ',' IN ',' || '${client_ip}' || ',') > 0\r\n)\r\nAND (\r\n  COALESCE('${http_method}', '') = ''\r\n  OR POSITION(',' || CAST(http_method AS VARCHAR) || ',' IN ',' || '${http_method}' || ',') > 0\r\n)\r\nAND (\r\n  COALESCE('${request_url}', '') = ''\r\n  OR request_url LIKE CONCAT('%', '${request_url}', '%')\r\n)\r\nAND (\r\n  COALESCE('${http_status}', '') = ''\r\n  OR \r\n    ',' || '${http_status}' || ',' LIKE '%,' || CAST(http_status AS VARCHAR) || ',%'\r\n)\r\nAND (\r\n  COALESCE('${cache_status}', '') = ''\r\n  OR POSITION(',' || CAST(cache_status AS VARCHAR) || ',' IN ',' || '${cache_status}' || ',') > 0\r\n)\r\nAND (\r\n  COALESCE('${user_agent}', '') = ''\r\n  OR POSITION(',' || CAST(user_agent AS VARCHAR) || ',' IN ',' || '${user_agent}' || ',') > 0\r\n)\r\nAND (\r\n  COALESCE('${referrer}', '') = ''\r\n  OR POSITION(',' || CAST(referrer AS VARCHAR) || ',' IN ',' || '${referrer}' || ',') > 0\r\n)\r\n\r\nLIMIT 10000",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "logs",
+    "athena"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Client IP",
+        "name": "client_ip",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Status",
+        "name": "http_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Request URL (contains)",
+        "name": "request_url",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Min Response Time",
+        "name": "response_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Method",
+        "name": "http_method",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "User Agent",
+        "name": "user_agent",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "HIT, MISS",
+        "label": "Cache Status",
+        "name": "cache_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "",
+        "label": "Referrer",
+        "name": "referrer",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Athena CDN Log Table",
+  "uid": "athena-cdn-logs-offline",
+  "version": 2
+}

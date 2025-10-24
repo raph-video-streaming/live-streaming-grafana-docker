@@ -1,0 +1,1532 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 12,
+      "panels": [],
+      "title": "General KPI",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  count(*) as \"Total Requests\",\r\n  round(sum(response_size) / 1024.0 / 1024.0, 2) as \"Total Volume (MB)\",\r\n  round(sum(response_size) / 1024.0 / 1024.0 / 1024.0, 2) as \"Total Volume (GB)\",\r\n  round(sum(response_size) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 3) as \"Total Volume (TB)\"\r\nfrom log \r\nwhere response_size is not null and response_size > 0",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "stat",
+          "ycol": "Total Requests, Total Volume (MB), Total Volume (GB), Total Volume (TB)"
+        }
+      ],
+      "title": "Total Request/Egress Volume ",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  content_type as file_type,\r\n  round((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log \r\ngroup by content_type \r\norder by percentage desc",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "pie",
+          "ycol": "file_type, percentage"
+        }
+      ],
+      "title": "FileType",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 11,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  return_code as metric,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as value\r\nfrom log \r\nwhere return_code is not null\r\ngroup by return_code \r\norder by value desc",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "bar",
+          "ycol": "metric, value"
+        }
+      ],
+      "title": "HTTP Status Code ",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  round((sum(response_size) * 8) / (1024 * 1024) / 300, 2) as \"Bandwidth Mbps\"\r\nfrom log \r\nwhere response_size is not null and response_size > 0\r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Bandwidth Mbps"
+        }
+      ],
+      "title": "Bandwidth (Mbps)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  round((COUNT(CASE WHEN hit_info = 'HIT' THEN 1 END) * 100.0 / COUNT(*)), 2) as \"Cache Hit Ratio %\",\r\n  round((COUNT(CASE WHEN hit_info = 'MISS' THEN 1 END) * 100.0 / COUNT(*)), 2) as \"Cache Miss Ratio %\"\r\nfrom log \r\nwhere hit_info != '-'\r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Cache Hit Ratio %, Cache Miss Ratio %"
+        }
+      ],
+      "title": "Cache Hit Ratio",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  round(COUNT(*) / 300.0, 2) as \"Requests per Second\"\r\nfrom log \r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Requests per Second"
+        }
+      ],
+      "title": "Total Req/sec ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(*) as \"Total Requests\"\r\nfrom log \r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Total Requests"
+        }
+      ],
+      "title": "Total Req",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  avg(request_time) as \"Avg Response Time\",\r\n  max(request_time) as \"Max Response Time\"\r\nfrom log \r\nwhere request_time is not null\r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Avg Response Time, Max Response Time"
+        }
+      ],
+      "title": "Max/Avg Response Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 14,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  case \r\n    when request_time < 100 then '0-100ms'\r\n    when request_time < 200 then '100-200ms'\r\n    when request_time < 500 then '200-500ms'\r\n    when request_time < 1000 then '500ms-1s'\r\n    when request_time < 2000 then '1-2s'\r\n    when request_time < 5000 then '2-5s'\r\n    when request_time < 10000 then '5-10s'\r\n    when request_time < 30000 then '10-30s'\r\n    else '30s+'\r\n  end as response_time_bucket,\r\n  count(*) as request_count,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log \r\nwhere request_time is not null and request_time > 0\r\ngroup by response_time_bucket \r\norder by request_count desc",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "pie",
+          "ycol": "response_time_bucket, request_count"
+        }
+      ],
+      "title": "Response Time Distribution",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 15,
+      "panels": [],
+      "title": "Video Streaming",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  avg(case when uri like '%index.m3u8' then request_time / 1000.0 end) as \"Master Avg Response Time\",\r\n  max(case when uri like '%index.m3u8' then request_time / 1000.0 end) as \"Master Max Response Time\",\r\n  avg(case when uri like '%.m3u8' and uri not like '%index.m3u8' then request_time / 1000.0 end) as \"Child Avg Response Time\",\r\n  max(case when uri like '%.m3u8' and uri not like '%index.m3u8' then request_time / 1000.0 end) as \"Child Max Response Time\",\r\n  avg(case when uri like '%.mp4' then request_time / 1000.0 end) as \"Fragment Avg Response Time\",\r\n  max(case when uri like '%.mp4' then request_time / 1000.0 end) as \"Fragment Max Response Time\"\r\nfrom log \r\nwhere request_time is not null\r\ngroup by time \r\norder by time",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Master Avg Response Time, Master Max Response Time, Child Avg Response Time, Child Max Response Time, Fragment Avg Response Time, Fragment Max Response Time"
+        }
+      ],
+      "title": "Response Time per type",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 34
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  case \r\n    when uri like '%/ch%' then regexp_extract(uri, 'ch([0-9]+)', 1)\r\n    else 'unknown'\r\n  end as channel,\r\n  count(*) as \"Total Requests\"\r\nfrom log \r\nwhere uri like '%index.m3u8'\r\ngroup by time, channel \r\norder by time, \"Total Requests\" desc",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "channel#:#Total Requests"
+        }
+      ],
+      "title": "Total Request per channel",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 42
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch01\",\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch02\",\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch03\",\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch04\",\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch05\",\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch06\",\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch07\",\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch08\",\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch09\",\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch10\",\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch11\",\r\n  approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"others\"\r\nfrom log \r\nwhere regexp_extract(uri, '/([^/]+)/live/', 1) != ''\r\ngroup by time\r\norder by time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "ch01,ch02,ch03,ch04,ch05,ch06,ch07,ch08,ch09,ch10,ch11,others"
+        }
+      ],
+      "title": "Concurrent Sessions - Long Token ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 42
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch01\",\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch02\",\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch03\",\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch04\",\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch05\",\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch06\",\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch07\",\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch08\",\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch09\",\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch10\",\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch11\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "ch01,ch02,ch03,ch04,ch05,ch06,ch07,ch08,ch09,ch10,ch11"
+        }
+      ],
+      "title": "Concurrent Sessions - Short Token ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "audio4"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 50
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(case when uri like '%__2160p%' and uri like '%.mp4' then 1 end) as \"2610p\",\r\n  count(case when uri like '%__1080p%' and uri like '%.mp4' then 1 end) as \"1080p\",\r\n  count(case when uri like '%__720p%' and uri like '%.mp4' then 1 end) as \"720p\",\r\n  count(case when uri like '%__432p%' and uri like '%.mp4' then 1 end) as \"432p\",\r\n  count(case when uri like '%segment__4%' and uri like '%.mp4' then 1 end) as \"audio1\",\r\n  count(case when uri like '%segment__5%' and uri like '%.mp4' then 1 end) as \"audio2\",\r\n  count(case when uri like '%segment__6%' and uri like '%.mp4' then 1 end) as \"audio3\",\r\n  count(case when uri like '%segment__7%' and uri like '%.mp4' then 1 end) as \"audio4\"\r\nfrom log \r\nwhere (uri like '%__1080p%' or uri like '%__720p%' or uri like '%__432p%' or uri like '%segment__4%' or uri like '%segment__5%' or uri like '%segment__6%' or uri like '%segment__7%')\r\n  and uri like '%.mp4'\r\ngroup by time\r\norder by time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "2160p, 1080p,720p,432p,audio1,audio2,audio3,audio4"
+        }
+      ],
+      "title": "Video Rendition - Usage over time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 50
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(distinct case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index\",\r\n  count(distinct case when uri like '%ll-index.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ll-index\",\r\n  count(distinct case when uri like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index-720p\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end) as \"total_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' then 1 end) as \"total_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' then 1 end) as \"total_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) as \"5xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index-720p_requests\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"4xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index-720p_error_rate\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"5xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index-720p_error_rate\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "4xx_index_error_rate,4xx_ll-index_error_rate,4xx_index-720p_error_rate, index, 4xx_index_requests"
+        }
+      ],
+      "title": "New Session - Error Rate",
+      "type": "timeseries"
+    }
+  ],
+  "preload": true,
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "alibaba",
+    "analytics",
+    "real-time"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Alibaba CDN Logs - QoS Performance - Real-Time",
+  "uid": "admsttp",
+  "version": 43
+}
