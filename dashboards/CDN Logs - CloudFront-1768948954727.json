@@ -1,0 +1,225 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 8,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "unique_user_agents"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 199
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "channel"
+          }
+        ]
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "WITH parsed AS (\n    SELECT\n        date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') AS ts,\n        CAST(sc_bytes AS BIGINT) AS sc_bytes_num,\n        c_ip,\n        cs_user_agent,\n        sc_status,\n        cs_uri_stem,\n\n        -- Correct channel extraction: always extract what's after /live/\n        regexp_extract(cs_uri_stem, '/live/([^/]+)/', 1) AS channel,\n\n        -- Extract token (string before /live/)\n        regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) AS token,\n\n        CASE \n            WHEN cs_uri_stem LIKE '%index.m3u8' THEN 'index'\n            WHEN cs_uri_stem LIKE '%ll-index.m3u8' THEN 'll_index'\n            WHEN cs_uri_stem LIKE '%index_720p.m3u8' THEN 'index_720p'\n            WHEN cs_uri_stem LIKE '%ll-index_720p.m3u8' THEN 'll_index_720p'\n        END AS file_type\n\n    FROM cdn_logs_cloudfront_partitioned.access_logs_parquet\n\n    WHERE \n        date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')\n            BETWEEN timestamp '${date_game} 00:00:00'\n                AND timestamp '${date_game_end} 23:59:59'\n\n        AND sc_bytes IS NOT NULL\n        AND sc_bytes != '-'\n        AND sc_status = '200'\n\n        -- Very important: match ANY /live/ channel\n        AND cs_uri_stem LIKE '%/live/%'\n),\n\nfiltered AS (\n    SELECT *\n    FROM parsed\n    WHERE channel IS NOT NULL\n),\n\nminute_level AS (\n    SELECT\n        date_trunc('minute', ts) AS minute_ts,\n        date(ts) AS log_date,\n        channel,\n        SUM(sc_bytes_num) AS total_bytes_minute,\n        (SUM(sc_bytes_num) * 8) / (1024 * 1024 * 60) AS bandwidth_mbps_minute\n    FROM filtered\n    GROUP BY 1, 2, 3\n),\n\ndaily_channel_agg AS (\n    SELECT\n        log_date,\n        channel,\n        SUM(total_bytes_minute) AS total_volume_bytes,\n        SUM(total_bytes_minute) / (1024*1024*1024) AS total_volume_gb,\n        MAX(bandwidth_mbps_minute) AS max_bandwidth_mbps\n    FROM minute_level\n    GROUP BY 1, 2\n),\n\nunique_counts AS (\n    SELECT\n        date(ts) AS log_date,\n        channel,\n        COUNT(DISTINCT token) AS unique_tokens,\n        COUNT(DISTINCT c_ip) AS unique_client_ips,\n        COUNT(DISTINCT cs_user_agent) AS unique_user_agents\n    FROM filtered\n    GROUP BY 1, 2\n),\n\nchannel_file_platform AS (\n    SELECT\n        date(ts) AS log_date,\n        channel,\n        COUNT(DISTINCT c_ip) AS unique_ips_per_channel,\n\n        SUM(CASE WHEN file_type = 'index' THEN 1 ELSE 0 END) AS index_requests,\n        SUM(CASE WHEN file_type = 'll_index' THEN 1 ELSE 0 END) AS ll_index_requests,\n        SUM(CASE WHEN file_type = 'index_720p' THEN 1 ELSE 0 END) AS index_720p_requests,\n        SUM(CASE WHEN file_type = 'll_index_720p' THEN 1 ELSE 0 END) AS ll_index_720p_requests,\n\n        approx_distinct(CASE WHEN file_type = 'index' THEN token END) AS unique_tokens_index,\n        approx_distinct(CASE WHEN file_type = 'll_index' THEN token END) AS unique_tokens_ll_index,\n        approx_distinct(CASE WHEN file_type = 'index_720p' THEN token END) AS unique_tokens_720p,\n        approx_distinct(CASE WHEN file_type = 'll_index_720p' THEN token END) AS unique_tokens_ll_720p,\n\n        SUM(CASE WHEN \n            cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR\n            cs_user_agent LIKE '%Web0S%' OR cs_user_agent LIKE '%SmartTV%' OR\n            cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR\n            cs_user_agent LIKE '%webOS.TV%'\n        THEN 1 ELSE 0 END) AS lg_tv_requests,\n\n        SUM(CASE WHEN \n            cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR\n            cs_user_agent LIKE '%Tizen%' OR cs_user_agent LIKE '%SAMSUNGTV%' OR \n            cs_user_agent LIKE '%Maple%'\n        THEN 1 ELSE 0 END) AS samsung_tv_requests,\n\n        SUM(CASE WHEN NOT (\n            cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR cs_user_agent LIKE '%Web0S%' OR\n            cs_user_agent LIKE '%SmartTV%' OR cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR cs_user_agent LIKE '%webOS.TV%' OR\n            cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR cs_user_agent LIKE '%Tizen%' OR cs_user_agent LIKE '%SAMSUNGTV%' OR cs_user_agent LIKE '%Maple%'\n        ) THEN 1 ELSE 0 END) AS other_platform_requests\n\n    FROM filtered\n    GROUP BY 1, 2\n)\n\nSELECT\n    d.log_date,\n    d.channel,\n    d.total_volume_bytes,\n    d.total_volume_gb,\n    d.max_bandwidth_mbps,\n    u.unique_tokens,\n    u.unique_client_ips,\n    u.unique_user_agents,\n    c.index_requests,\n    c.ll_index_requests,\n    c.index_720p_requests,\n    c.ll_index_720p_requests,\n    c.unique_tokens_index,\n    c.unique_tokens_ll_index,\n    c.unique_tokens_720p,\n    c.unique_tokens_ll_720p,\n    c.lg_tv_requests,\n    c.samsung_tv_requests,\n    c.other_platform_requests\nFROM daily_channel_agg d\nJOIN unique_counts u\n    ON d.log_date = u.log_date AND d.channel = u.channel\nLEFT JOIN channel_file_platform c\n    ON d.log_date = c.log_date AND d.channel = c.channel\nORDER BY d.log_date, d.channel;\n",
+          "refId": "A",
+          "table": "access_logs_parquet"
+        }
+      ],
+      "title": "Total View CloudFront",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "logs",
+    "athena",
+    "cloudfront",
+    "reporting"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "ch02",
+          "value": "ch02"
+        },
+        "label": "ChannelName",
+        "name": "channel_name",
+        "options": [
+          {
+            "selected": true,
+            "text": "ch02",
+            "value": "ch02"
+          }
+        ],
+        "query": "ch02",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "2025-12-03",
+          "value": "2025-12-03"
+        },
+        "label": "Start Date Match",
+        "name": "date_game",
+        "options": [
+          {
+            "selected": true,
+            "text": "2025-12-03",
+            "value": "2025-12-03"
+          }
+        ],
+        "query": "2025-12-03",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "2025-12-03",
+          "value": "2025-12-03"
+        },
+        "label": "Start Date Match",
+        "name": "date_game_end",
+        "options": [
+          {
+            "selected": true,
+            "text": "2025-12-03",
+            "value": "2025-12-03"
+          }
+        ],
+        "query": "2025-12-03",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "13:00",
+          "value": "13:00"
+        },
+        "label": "Start Time",
+        "name": "start_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "13:00",
+            "value": "13:00"
+          }
+        ],
+        "query": "13:00",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "18:00",
+          "value": "18:00"
+        },
+        "label": "End Time",
+        "name": "end_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "18:00",
+            "value": "18:00"
+          }
+        ],
+        "query": "18:00",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "2025-11-22T23:00:00.000Z",
+    "to": "2025-11-23T22:59:59.000Z"
+  },
+  "timepicker": {
+    "refresh_intervals": []
+  },
+  "timezone": "",
+  "title": "CDN Logs - CloudFront",
+  "uid": "cdn-reporting",
+  "version": 26
+}

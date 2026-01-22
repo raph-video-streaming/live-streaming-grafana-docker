@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -776,9 +776,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -801,11 +801,11 @@
             "uid": "bf0ycdbma6u4ge"
           },
           "format": 1,
-          "rawSQL": "-- OFFLINE LOG DASHBOARD - Response Time\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END as time,\r\n  AVG(response_time) AS \"Avg Response Time\",\r\n  MAX(response_time) AS \"Max Response Time\"\r\nFROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\" \r\nWHERE (\r\n  -- Use OR conditions for proper partition pruning across multiple months\r\n  (year = date_format($__timeFrom(), '%Y') AND month = date_format($__timeFrom(), '%m') AND day >= date_format($__timeFrom(), '%d')) OR\r\n  (year = date_format($__timeTo(), '%Y') AND month = date_format($__timeTo(), '%m') AND day <= date_format($__timeTo(), '%d')) OR\r\n  -- Handle months between start and end dates\r\n  (year = date_format($__timeFrom(), '%Y') AND month > date_format($__timeFrom(), '%m') AND month < date_format($__timeTo(), '%m')) OR\r\n  (year = date_format($__timeTo(), '%Y') AND month > date_format($__timeFrom(), '%m') AND month < date_format($__timeTo(), '%m')) OR\r\n  (year > date_format($__timeFrom(), '%Y') AND year < date_format($__timeTo(), '%Y'))\r\n)\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) >= $__timeFrom()\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) <= $__timeTo()\r\n  AND response_time IS NOT NULL\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END\r\nORDER BY time\r\n",
+          "rawSQL": "-- OFFLINE LOG DASHBOARD - Response Time per File Type\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END AS time,\r\n\r\n  -- Master Playlist\r\n  AVG(CASE WHEN (\r\n    request_url LIKE '%index.m3u8' OR \r\n    request_url LIKE '%ll-index.m3u8' OR \r\n    request_url LIKE '%index-720p.m3u8' OR \r\n    request_url LIKE '%manifest.mpd'\r\n  ) THEN CAST(response_time AS double) END) AS \"Master Avg Response Time\",\r\n  \r\n  MAX(CASE WHEN (\r\n    request_url LIKE '%index.m3u8' OR \r\n    request_url LIKE '%ll-index.m3u8' OR \r\n    request_url LIKE '%index-720p.m3u8' OR \r\n    request_url LIKE '%manifest.mpd'\r\n  ) THEN CAST(response_time AS double) END) AS \"Master Max Response Time\",\r\n\r\n  -- Child Playlist\r\n  AVG(CASE WHEN (\r\n    request_url LIKE '%.m3u8' AND \r\n    request_url NOT LIKE '%index.m3u8' AND \r\n    request_url NOT LIKE '%ll-index.m3u8' AND \r\n    request_url NOT LIKE '%index-720p.m3u8'\r\n  ) THEN CAST(response_time AS double) END) AS \"Child Avg Response Time\",\r\n  \r\n  MAX(CASE WHEN (\r\n    request_url LIKE '%.m3u8' AND \r\n    request_url NOT LIKE '%index.m3u8' AND \r\n    request_url NOT LIKE '%ll-index.m3u8' AND \r\n    request_url NOT LIKE '%index-720p.m3u8'\r\n  ) THEN CAST(response_time AS double) END) AS \"Child Max Response Time\",\r\n\r\n  -- Fragments\r\n  AVG(CASE WHEN request_url LIKE '%.mp4' THEN CAST(response_time AS double) END) AS \"Fragment Avg Response Time\",\r\n  MAX(CASE WHEN request_url LIKE '%.mp4' THEN CAST(response_time AS double) END) AS \"Fragment Max Response Time\"\r\n\r\nFROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\" \r\nWHERE (\r\n  -- Partition pruning across months/years\r\n  (year = date_format($__timeFrom(), '%Y') AND month = date_format($__timeFrom(), '%m') AND day >= date_format($__timeFrom(), '%d')) OR\r\n  (year = date_format($__timeTo(), '%Y') AND month = date_format($__timeTo(), '%m') AND day <= date_format($__timeTo(), '%d')) OR\r\n  (year = date_format($__timeFrom(), '%Y') AND month > date_format($__timeFrom(), '%m') AND month < date_format($__timeTo(), '%m')) OR\r\n  (year = date_format($__timeTo(), '%Y') AND month > date_format($__timeFrom(), '%m') AND month < date_format($__timeTo(), '%m')) OR\r\n  (year > date_format($__timeFrom(), '%Y') AND year < date_format($__timeTo(), '%Y'))\r\n)\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) >= $__timeFrom()\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) <= $__timeTo()\r\n  AND response_time IS NOT NULL\r\n\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END\r\nORDER BY time;\r\n",
           "refId": "A"
         }
       ],
-      "title": "Max Response Time",
+      "title": "Response Time per type (s)",
       "transparent": true,
       "type": "timeseries"
     },
@@ -1062,7 +1062,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Total Requests ch01"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1099,7 +1124,7 @@
             "uid": "bf0ycdbma6u4ge"
           },
           "format": 0,
-          "rawSQL": "-- OFFLINE LOG DASHBOARD - Total Request per channel\r\n-- Channel requests time series with precise time grouping\r\n-- Shows request counts by channel over time with minute-level precision for short ranges\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('day', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END as time,\r\n  CASE \r\n    WHEN regexp_extract(request_url, 'ch([0-9]+)', 1) != '' \r\n    THEN concat('ch', lpad(regexp_extract(request_url, 'ch([0-9]+)', 1), 2, '0'))\r\n    ELSE 'unknown'\r\n  END as channel,\r\n  COUNT(*) as \"Total Requests\"\r\nFROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\" \r\nWHERE \r\n  -- Smart partition filtering based on time range (same pattern as other queries)\r\n  (\r\n    -- If querying current year, use year partition\r\n    (year = date_format($__timeFrom(), '%Y') AND year = date_format($__timeTo(), '%Y')) OR\r\n    -- If spanning years, include both years\r\n    (year = date_format($__timeFrom(), '%Y') OR year = date_format($__timeTo(), '%Y')) OR\r\n    -- If querying within same year, include that year\r\n    (year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y'))\r\n  )\r\n  -- Time range filtering with timezone adjustment (-8 hours for UTC+8 to UTC)\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) >= $__timeFrom()\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) <= $__timeTo()\r\n  -- Filter for index.m3u8 requests\r\n  AND request_url LIKE '%index.m3u8'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('day', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END,\r\n  CASE \r\n    WHEN regexp_extract(request_url, 'ch([0-9]+)', 1) != '' \r\n    THEN concat('ch', lpad(regexp_extract(request_url, 'ch([0-9]+)', 1), 2, '0'))\r\n    ELSE 'unknown'\r\n  END\r\nORDER BY time, \"Total Requests\" DESC;\r\n",
+          "rawSQL": "-- OFFLINE LOG DASHBOARD - Total Request per channel\r\n-- Channel requests time series with precise time grouping\r\n-- Shows request counts by channel over time with minute-level precision for short ranges\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('day', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END as time,\r\n  CASE \r\n    WHEN regexp_extract(request_url, 'ch([0-9]+)', 1) != '' \r\n    THEN concat('ch', lpad(regexp_extract(request_url, 'ch([0-9]+)', 1), 2, '0'))\r\n    ELSE 'unknown'\r\n  END as channel,\r\n  COUNT(*) as \"Total Requests\"\r\nFROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\" \r\nWHERE \r\n  -- Smart partition filtering based on time range (same pattern as other queries)\r\n  (\r\n    -- If querying current year, use year partition\r\n    (year = date_format($__timeFrom(), '%Y') AND year = date_format($__timeTo(), '%Y')) OR\r\n    -- If spanning years, include both years\r\n    (year = date_format($__timeFrom(), '%Y') OR year = date_format($__timeTo(), '%Y')) OR\r\n    -- If querying within same year, include that year\r\n    (year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y'))\r\n  )\r\n  -- Time range filtering with timezone adjustment (-8 hours for UTC+8 to UTC)\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) >= $__timeFrom()\r\n  AND date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')) <= $__timeTo()\r\n\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n    ELSE date_trunc('day', date_add('hour', -8, date_parse(date_time, '%d/%b/%Y:%H:%i:%s')))\r\n  END,\r\n  CASE \r\n    WHEN regexp_extract(request_url, 'ch([0-9]+)', 1) != '' \r\n    THEN concat('ch', lpad(regexp_extract(request_url, 'ch([0-9]+)', 1), 2, '0'))\r\n    ELSE 'unknown'\r\n  END\r\nORDER BY time, \"Total Requests\" DESC;\r\n",
           "refId": "A"
         }
       ],
@@ -1576,12 +1601,12 @@
     "list": []
   },
   "time": {
-    "from": "2025-10-19T21:00:00.000Z",
-    "to": "2025-10-19T21:59:59.000Z"
+    "from": "2025-09-09T22:00:00.000Z",
+    "to": "2025-09-11T21:59:59.000Z"
   },
   "timepicker": {},
   "timezone": "Europe/Paris",
   "title": "Alibaba CDN Logs - QoS Performance",
   "uid": "adlwcrlqed",
-  "version": 3
+  "version": 6
 }

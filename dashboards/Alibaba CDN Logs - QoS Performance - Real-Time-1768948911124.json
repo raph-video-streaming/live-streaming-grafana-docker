@@ -30,6 +30,381 @@
         "x": 0,
         "y": 0
       },
+      "id": 23,
+      "panels": [],
+      "title": "CMCD",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 25,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n  COUNT(DISTINCT REGEXP_EXTRACT(uri_param, 'sid%3D%22([^%]+)%22', 1)) AS \"Unique SIDs\",\r\n  COUNT(DISTINCT REGEXP_EXTRACT(uri_param, 'cid%3D%22([^%]+)%22', 1)) AS \"Unique CIDs\"\r\nFROM log\r\nWHERE\r\n  uri_param LIKE '%CMCD%'\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "stat",
+          "ycol": "Unique SIDs, Unique CIDs"
+        }
+      ],
+      "title": "Total Unique Sessions and Events",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 27,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n  MIN(CAST(REGEXP_EXTRACT(uri_param, 'ltc%3D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Min LTC\",\r\n  AVG(CAST(REGEXP_EXTRACT(uri_param, 'ltc%3D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Avg LTC\",\r\n  MAX(CAST(REGEXP_EXTRACT(uri_param, 'ltc%3D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Max LTC\"\r\nFROM log\r\nWHERE\r\n  uri_param LIKE '%CMCD%'\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "stat",
+          "ycol": "Min LTC, Max LTC, Avg LTC"
+        }
+      ],
+      "title": "Min/Max Latency (seconds)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n  __time__ - __time__ % 300 AS time,  -- 5-minute window\r\n  COUNT(DISTINCT REGEXP_EXTRACT(uri_param, 'sid%3D%22([^%]+)%22', 1)) AS concurrent_views\r\nFROM log\r\nWHERE\r\n  uri_param LIKE '%CMCD%'  -- only CMCD logs\r\nGROUP BY time\r\nORDER BY time ASC\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "concurrent_views"
+        }
+      ],
+      "title": "Concurrent Sessions - SID",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n  __time__ - __time__ % 300 AS time,  -- 5-minute interval\r\n  MIN(CAST(REGEXP_EXTRACT(uri_param, 'mtp%3D([0-9]+)', 1) AS DOUBLE)) AS \"Min MTP\",\r\n  MAX(CAST(REGEXP_EXTRACT(uri_param, 'mtp%3D([0-9]+)', 1) AS DOUBLE)) AS \"Max MTP\",\r\n  ROUND(AVG(CAST(REGEXP_EXTRACT(uri_param, 'mtp%3D([0-9]+)', 1) AS DOUBLE)), 2) AS \"Avg MTP\"\r\nFROM log\r\nWHERE\r\n  uri_param LIKE '%CMCD%'\r\n  AND request_time IS NOT NULL\r\nGROUP BY time\r\nORDER BY time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "Min MTP, Max MTP, Avg MTP"
+        }
+      ],
+      "title": "User Bandwith (MTP)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
       "id": 12,
       "panels": [],
       "title": "General KPI",
@@ -63,10 +438,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
+        "h": 11,
+        "w": 10,
         "x": 0,
-        "y": 1
+        "y": 18
       },
       "id": 3,
       "options": {
@@ -135,12 +510,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 1
+        "h": 11,
+        "w": 4,
+        "x": 10,
+        "y": 18
       },
-      "id": 2,
+      "id": 14,
       "options": {
         "displayLabels": [
           "percent"
@@ -148,7 +523,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true,
           "values": []
         },
@@ -170,15 +545,109 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  case \r\n    when request_time < 100 then '0-100ms'\r\n    when request_time < 200 then '100-200ms'\r\n    when request_time < 500 then '200-500ms'\r\n    when request_time < 1000 then '500ms-1s'\r\n    when request_time < 2000 then '1-2s'\r\n    when request_time < 5000 then '2-5s'\r\n    when request_time < 10000 then '5-10s'\r\n    when request_time < 30000 then '10-30s'\r\n    else '30s+'\r\n  end as response_time_bucket,\r\n  count(*) as request_count,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log \r\nwhere request_time is not null and request_time > 0\r\ngroup by response_time_bucket \r\norder by request_count desc",
+          "rawSQL": "",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "pie",
+          "ycol": "response_time_bucket, request_count"
+        }
+      ],
+      "title": "Response Time Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 4,
+        "x": 14,
+        "y": 18
+      },
+      "id": 2,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  content_type as file_type,\r\n  round((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log \r\ngroup by content_type \r\norder by percentage desc",
+          "rawSQL": "",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -217,10 +686,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 1
+        "h": 11,
+        "w": 6,
+        "x": 18,
+        "y": 18
       },
       "id": 11,
       "options": {
@@ -248,15 +717,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  return_code as metric,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as value\r\nfrom log \r\nwhere return_code is not null\r\ngroup by return_code \r\norder by value desc",
+          "rawSQL": "* | select \\r  return_code as metric,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as value\r\nfrom log \r\nwhere return_code is not null\r\ngroup by return_code \r\norder by value desc",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -264,7 +742,7 @@
           "ycol": "metric, value"
         }
       ],
-      "title": "HTTP Status Code ",
+      "title": "HTTP Status Code %",
       "type": "bargauge"
     },
     {
@@ -332,7 +810,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 29
       },
       "id": 4,
       "options": {
@@ -435,7 +913,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 29
       },
       "id": 5,
       "options": {
@@ -454,15 +932,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  round((COUNT(CASE WHEN hit_info = 'HIT' THEN 1 END) * 100.0 / COUNT(*)), 2) as \"Cache Hit Ratio %\",\r\n  round((COUNT(CASE WHEN hit_info = 'MISS' THEN 1 END) * 100.0 / COUNT(*)), 2) as \"Cache Miss Ratio %\"\r\nfrom log \r\nwhere hit_info != '-'\r\ngroup by time \r\norder by time",
+          "rawSQL": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  round((COUNT(CASE WHEN hit_info = 'HIT' THEN 1 END) * 100.0 / COUNT(*)), 2) as \\\"Cache Hit Ratio %\\\",\r\n  round((COUNT(CASE WHEN hit_info = 'MISS' THEN 1 END) * 100.0 / COUNT(*)), 2) as \\\"Cache Miss Ratio %\\\"\r\nfrom log \r\nwhere hit_info != '-'\r\ngroup by time \r\norder by time",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -538,7 +1025,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 37
       },
       "id": 6,
       "options": {
@@ -574,6 +1061,109 @@
         }
       ],
       "title": "Total Req/sec ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "hide": false,
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "*\r\n| select \r\n    __time__ - (__time__ % 300) as time,\r\n    count(case when return_code = 200 then 1 end) as \"200\",\r\n    count(case when return_code = 301 then 1 end) as \"301\",\r\n    count(case when return_code = 302 then 1 end) as \"302\",\r\n    count(case when return_code = 400 then 1 end) as \"400\",\r\n    count(case when return_code = 401 then 1 end) as \"401\",\r\n    count(case when return_code = 403 then 1 end) as \"403\",\r\n    count(case when return_code = 404 then 1 end) as \"404\",\r\n    count(case when return_code = 500 then 1 end) as \"500\",\r\n    count(case when return_code = 502 then 1 end) as \"502\",\r\n    count(case when return_code = 503 then 1 end) as \"503\",\r\n    count(case when return_code not in (200,301,302,400,401,403,404,500,502,503) then 1 end) as \"others\"\r\nfrom log\r\nwhere return_code is not null\r\ngroup by time\r\norder by time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": ""
+        }
+      ],
+      "title": "HTTP Status Code  ",
       "type": "timeseries"
     },
     {
@@ -641,7 +1231,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 17
+        "y": 44
       },
       "id": 13,
       "options": {
@@ -660,15 +1250,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(*) as \"Total Requests\"\r\nfrom log \r\ngroup by time \r\norder by time",
+          "rawSQL": "",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -741,10 +1340,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 12,
         "x": 0,
-        "y": 25
+        "y": 45
       },
       "id": 20,
       "options": {
@@ -783,92 +1382,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "aliyun-log-service-datasource",
-        "uid": "cf1suxi0jj4e8b"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 25
-      },
-      "id": 14,
-      "options": {
-        "displayMode": "lcd",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "currentPage": 1,
-          "datasource": {
-            "type": "aliyun-log-service-datasource",
-            "uid": "bf14l8s0es3r4d"
-          },
-          "logsPerPage": 100,
-          "logstore": "thamanyahcdn_v1",
-          "powerSql": false,
-          "query": "* | select \r\n  case \r\n    when request_time < 100 then '0-100ms'\r\n    when request_time < 200 then '100-200ms'\r\n    when request_time < 500 then '200-500ms'\r\n    when request_time < 1000 then '500ms-1s'\r\n    when request_time < 2000 then '1-2s'\r\n    when request_time < 5000 then '2-5s'\r\n    when request_time < 10000 then '5-10s'\r\n    when request_time < 30000 then '10-30s'\r\n    else '30s+'\r\n  end as response_time_bucket,\r\n  count(*) as request_count,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log \r\nwhere request_time is not null and request_time > 0\r\ngroup by response_time_bucket \r\norder by request_count desc",
-          "refId": "A",
-          "totalLogs": 100,
-          "type": "all",
-          "xcol": "pie",
-          "ycol": "response_time_bucket, request_count"
-        }
-      ],
-      "title": "Response Time Distribution",
-      "type": "bargauge"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 52
       },
       "id": 15,
       "panels": [],
@@ -940,15 +1459,15 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 34
+        "y": 53
       },
       "id": 9,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -959,15 +1478,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  avg(case when uri like '%index.m3u8' then request_time / 1000.0 end) as \"Master Avg Response Time\",\r\n  max(case when uri like '%index.m3u8' then request_time / 1000.0 end) as \"Master Max Response Time\",\r\n  avg(case when uri like '%.m3u8' and uri not like '%index.m3u8' then request_time / 1000.0 end) as \"Child Avg Response Time\",\r\n  max(case when uri like '%.m3u8' and uri not like '%index.m3u8' then request_time / 1000.0 end) as \"Child Max Response Time\",\r\n  avg(case when uri like '%.mp4' then request_time / 1000.0 end) as \"Fragment Avg Response Time\",\r\n  max(case when uri like '%.mp4' then request_time / 1000.0 end) as \"Fragment Max Response Time\"\r\nfrom log \r\nwhere request_time is not null\r\ngroup by time \r\norder by time",
+          "rawSQL": "",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -1043,15 +1571,15 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 34
+        "y": 53
       },
       "id": 22,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1062,15 +1590,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  case \r\n    when uri like '%/ch%' then regexp_extract(uri, 'ch([0-9]+)', 1)\r\n    else 'unknown'\r\n  end as channel,\r\n  count(*) as \"Total Requests\"\r\nfrom log \r\nwhere uri like '%index.m3u8'\r\ngroup by time, channel \r\norder by time, \"Total Requests\" desc",
+          "rawSQL": "",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -1146,15 +1683,15 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 61
       },
       "id": 7,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1165,15 +1702,24 @@
       "pluginVersion": "12.2.1",
       "targets": [
         {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
           "currentPage": 1,
           "datasource": {
             "type": "aliyun-log-service-datasource",
             "uid": "bf14l8s0es3r4d"
           },
+          "format": 1,
           "logsPerPage": 100,
           "logstore": "thamanyahcdn_v1",
           "powerSql": false,
           "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch01\",\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch02\",\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch03\",\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch04\",\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch05\",\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch06\",\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch07\",\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch08\",\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch09\",\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch10\",\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch11\",\r\n  approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"others\"\r\nfrom log \r\nwhere regexp_extract(uri, '/([^/]+)/live/', 1) != ''\r\ngroup by time\r\norder by time\r\n",
+          "rawSQL": "",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
@@ -1249,15 +1795,155 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 61
       },
       "id": 21,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "bf14l8s0es3r4d"
+          },
+          "format": 1,
+          "logsPerPage": 100,
+          "logstore": "thamanyahcdn_v1",
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch01\",\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch02\",\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch03\",\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch04\",\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch05\",\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch06\",\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch07\",\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch08\",\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch09\",\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch10\",\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch11\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n",
+          "rawSQL": "",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "ch01,ch02,ch03,ch04,ch05,ch06,ch07,ch08,ch09,ch10,ch11"
+        }
+      ],
+      "title": "Concurrent Sessions - Short Token ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "ch01_error_pct",
+                  "ch02_error_pct",
+                  "ch03_error_pct",
+                  "ch04_error_pct"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 69
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1269,22 +1955,140 @@
       "targets": [
         {
           "currentPage": 1,
-          "datasource": {
-            "type": "aliyun-log-service-datasource",
-            "uid": "bf14l8s0es3r4d"
-          },
           "logsPerPage": 100,
-          "logstore": "thamanyahcdn_v1",
           "powerSql": false,
-          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch01\",\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch02\",\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch03\",\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch04\",\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch05\",\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch06\",\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch07\",\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch08\",\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch09\",\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch10\",\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ch11\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n",
+          "query": "* | select\r\n  __time__ - __time__ % 300 as time,\r\n  -- Channel 01\r\n  approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch01_total\",\r\n  approx_distinct(case when uri like '%/ch01%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch01_errors\",\r\n  round(approx_distinct(case when uri like '%/ch01%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch01%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch01_error_pct\",\r\n\r\n  -- Channel 02\r\n  approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch02_total\",\r\n  approx_distinct(case when uri like '%/ch02%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch02_errors\",\r\n  round(approx_distinct(case when uri like '%/ch02%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch02%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch02_error_pct\",\r\n\r\n  -- Channel 03\r\n  approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch03_total\",\r\n  approx_distinct(case when uri like '%/ch03%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch03_errors\",\r\n  round(approx_distinct(case when uri like '%/ch03%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch03%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch03_error_pct\",\r\n\r\n  -- Channel 04\r\n  approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch04_total\",\r\n  approx_distinct(case when uri like '%/ch04%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch04_errors\",\r\n  round(approx_distinct(case when uri like '%/ch04%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch04%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch04_error_pct\",\r\n\r\n  -- Channel 05\r\n  approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch05_total\",\r\n  approx_distinct(case when uri like '%/ch05%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch05_errors\",\r\n  round(approx_distinct(case when uri like '%/ch05%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch05%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch05_error_pct\",\r\n\r\n  -- Channel 06\r\n  approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch06_total\",\r\n  approx_distinct(case when uri like '%/ch06%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch06_errors\",\r\n  round(approx_distinct(case when uri like '%/ch06%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch06%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch06_error_pct\",\r\n\r\n  -- Channel 07\r\n  approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch07_total\",\r\n  approx_distinct(case when uri like '%/ch07%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch07_errors\",\r\n  round(approx_distinct(case when uri like '%/ch07%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch07%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch07_error_pct\",\r\n\r\n  -- Channel 08\r\n  approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch08_total\",\r\n  approx_distinct(case when uri like '%/ch08%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch08_errors\",\r\n  round(approx_distinct(case when uri like '%/ch08%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch08%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch08_error_pct\",\r\n\r\n  -- Channel 09\r\n  approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch09_total\",\r\n  approx_distinct(case when uri like '%/ch09%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch09_errors\",\r\n  round(approx_distinct(case when uri like '%/ch09%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch09%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch09_error_pct\",\r\n\r\n  -- Channel 10\r\n  approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch10_total\",\r\n  approx_distinct(case when uri like '%/ch10%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch10_errors\",\r\n  round(approx_distinct(case when uri like '%/ch10%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch10%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch10_error_pct\",\r\n\r\n  -- Channel 11\r\n  approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch11_total\",\r\n  approx_distinct(case when uri like '%/ch11%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"ch11_errors\",\r\n  round(approx_distinct(case when uri like '%/ch11%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"ch11_error_pct\",\r\n\r\n  -- Others\r\n  approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"others_total\",\r\n  approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) as \"others_errors\",\r\n  round(approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' and return_code >= 400 then regexp_extract(uri, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when uri not like '%/ch01%' and uri not like '%/ch02%' and uri not like '%/ch03%' and uri not like '%/ch04%' and uri not like '%/ch05%' and uri not like '%/ch06%' and uri not like '%/ch07%' and uri not like '%/ch08%' and uri not like '%/ch09%' and uri not like '%/ch10%' and uri not like '%/ch11%' then regexp_extract(uri, '/([^/]+)/live/', 1) end), 0), 2) as \"others_error_pct\"\r\nfrom log\r\nwhere regexp_extract(uri, '/([^/]+)/live/', 1) != ''\r\ngroup by time\r\norder by time\r\n",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
           "xcol": "time",
-          "ycol": "ch01,ch02,ch03,ch04,ch05,ch06,ch07,ch08,ch09,ch10,ch11"
+          "ycol": "ch01_error_pct, ch02_error_pct, ch03_error_pct, ch04_error_pct, ch05_error_pct, ch06_error_pct, ch07_error_pct, ch08_error_pct, ch09_error_pct, ch10_error_pct, ch11_error_pct, others_error_pct"
         }
       ],
-      "title": "Concurrent Sessions - Short Token ",
+      "title": "Long Token - Error Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "4xx_index-720p_error_rate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 69
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(distinct case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index\",\r\n  count(distinct case when uri like '%ll-index.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ll-index\",\r\n  count(distinct case when uri like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index-720p\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end) as \"total_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' then 1 end) as \"total_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' then 1 end) as \"total_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) as \"5xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index-720p_requests\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"4xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index-720p_error_rate\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"5xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index-720p_error_rate\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": "4xx_index_error_rate,4xx_ll-index_error_rate,4xx_index-720p_error_rate"
+        }
+      ],
+      "title": "Short Token - Error Rate",
       "type": "timeseries"
     },
     {
@@ -1377,7 +2181,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 77
       },
       "id": 19,
       "options": {
@@ -1421,70 +2225,43 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
             }
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "mappings": []
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 10,
         "x": 12,
-        "y": 50
+        "y": 77
       },
-      "id": 16,
+      "id": 29,
       "options": {
+        "displayLabels": [
+          "percent"
+        ],
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "right",
-          "showLegend": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": []
         },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
         "tooltip": {
           "hideZeros": false,
           "mode": "single",
@@ -1495,18 +2272,23 @@
       "targets": [
         {
           "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "hide": false,
           "logsPerPage": 100,
           "powerSql": false,
-          "query": "* | select \r\n  __time__ - __time__ % 300 as time,\r\n  count(distinct case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index\",\r\n  count(distinct case when uri like '%ll-index.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"ll-index\",\r\n  count(distinct case when uri like '%index-720p.m3u8%' then regexp_extract(uri_param, 'auth_key=([^&]*)', 1) end) as \"index-720p\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end) as \"total_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' then 1 end) as \"total_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' then 1 end) as \"total_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) as \"4xx_index-720p_requests\",\r\n  count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index_requests\",\r\n  count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) as \"5xx_ll-index_requests\",\r\n  count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) as \"5xx_index-720p_requests\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"4xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code in (400, 401, 403, 404) then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"4xx_index-720p_error_rate\",\r\n  round(count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index.m3u8%' and uri not like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index_error_rate\",\r\n  round(count(case when uri like '%ll-index.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%ll-index.m3u8%' then 1 end), 2) as \"5xx_ll-index_error_rate\",\r\n  round(count(case when uri like '%index-720p.m3u8%' and return_code >= 500 then 1 end) * 100.0 / count(case when uri like '%index-720p.m3u8%' then 1 end), 2) as \"5xx_index-720p_error_rate\"\r\nfrom log \r\nwhere (uri like '%index.m3u8%' or uri like '%ll-index.m3u8%' or uri like '%index-720p.m3u8%')\r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) is not null \r\n  and regexp_extract(uri_param, 'auth_key=([^&]*)', 1) != ''\r\ngroup by time\r\norder by time\r\n\r\n",
+          "query": "* | select\r\n  case\r\n    when uri like '%__2160p%' and uri like '%.mp4' then '2160p'\r\n    when uri like '%__1080p%' and uri like '%.mp4' then '1080p'\r\n    when uri like '%__720p%' and uri like '%.mp4' then '720p'\r\n    when uri like '%__432p%' and uri like '%.mp4' then '432p'\r\n    else 'other'\r\n  end as video_renditions,\r\n  count(*) as request_count,\r\n  round(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nfrom log\r\nwhere (uri like '%__1080p%' or uri like '%__720p%' or uri like '%__432p%' or uri like '%__2160p%')\r\n  and uri like '%.mp4'\r\ngroup by video_renditions\r\norder by request_count desc\r\n",
           "refId": "A",
           "totalLogs": 100,
           "type": "all",
-          "xcol": "time",
-          "ycol": "4xx_index_error_rate,4xx_ll-index_error_rate,4xx_index-720p_error_rate, index, 4xx_index_requests"
+          "xcol": "pie",
+          "ycol": "video_renditions, request_count "
         }
       ],
-      "title": "New Session - Error Rate",
-      "type": "timeseries"
+      "title": "Video Rendition Distribution",
+      "type": "piechart"
     }
   ],
   "preload": true,
@@ -1528,5 +2310,5 @@
   "timezone": "browser",
   "title": "Alibaba CDN Logs - QoS Performance - Real-Time",
   "uid": "admsttp",
-  "version": 43
+  "version": 66
 }

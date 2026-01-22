@@ -1,0 +1,353 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 9,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- Channel Analysis with Unique Tokens per Channel (ch01-ch10) - Fixed Grafana Variables\nSELECT \n  channel,\n  COUNT(DISTINCT client_ip) AS total_unique_ips,\n  COUNT(CASE WHEN request_url LIKE '%index.m3u8%' THEN 1 END) AS index_requests,\n  COUNT(CASE WHEN request_url LIKE '%ll-index.m3u8%' THEN 1 END) AS ll_index_requests,\n  COUNT(CASE WHEN request_url LIKE '%index_720p.m3u8%' THEN 1 END) AS index_720p_requests,\n  COUNT(CASE WHEN request_url LIKE '%ll-index_720p.m3u8%' THEN 1 END) AS ll_index_720p_requests,\n  \n  -- Total unique tokens across all manifest types\n  approx_distinct(regexp_extract(request_url, 'servers8\\.com/([^/]+)/live/', 1)) AS total_unique_tokens,\n  \n  -- Unique tokens for each file type\n  approx_distinct(CASE WHEN request_url LIKE '%index.m3u8%' THEN regexp_extract(request_url, 'servers8\\.com/([^/]+)/live/', 1) END) AS unique_tokens_index,\n  approx_distinct(CASE WHEN request_url LIKE '%ll-index.m3u8%' THEN regexp_extract(request_url, 'servers8\\.com/([^/]+)/live/', 1) END) AS unique_tokens_ll_index,\n  approx_distinct(CASE WHEN request_url LIKE '%index_720p.m3u8%' THEN regexp_extract(request_url, 'servers8\\.com/([^/]+)/live/', 1) END) AS unique_tokens_720p,\n  approx_distinct(CASE WHEN request_url LIKE '%ll-index_720p.m3u8%' THEN regexp_extract(request_url, 'servers8\\.com/([^/]+)/live/', 1) END) AS unique_tokens_ll_720p,\n  \n  -- Platform breakdown\n  COUNT(CASE WHEN (user_agent LIKE '%WebOS%' OR user_agent LIKE '%webOS%' OR user_agent LIKE '%Web0S%' OR \n     user_agent LIKE '%SmartTV%' OR user_agent LIKE '%WebAppManager%' OR user_agent LIKE '%LGTV%' OR \n     user_agent LIKE '%webOS.TV%') THEN 1 END) AS lg_tv_requests,\n     \n  COUNT(CASE WHEN (user_agent LIKE '%SMART-TV%' OR user_agent LIKE '%SamsungBrowser%' OR user_agent LIKE '%Tizen%' OR \n     user_agent LIKE '%SAMSUNGTV%' OR user_agent LIKE '%Maple%') THEN 1 END) AS samsung_tv_requests,\n     \n  COUNT(CASE WHEN NOT (user_agent LIKE '%WebOS%' OR user_agent LIKE '%webOS%' OR user_agent LIKE '%Web0S%' OR \n         user_agent LIKE '%SmartTV%' OR user_agent LIKE '%WebAppManager%' OR user_agent LIKE '%LGTV%' OR \n         user_agent LIKE '%webOS.TV%' OR user_agent LIKE '%SMART-TV%' OR user_agent LIKE '%SamsungBrowser%' OR \n         user_agent LIKE '%Tizen%' OR user_agent LIKE '%SAMSUNGTV%' OR user_agent LIKE '%Maple%') THEN 1 END) AS other_platform_requests\n\nFROM (\n  SELECT *, \n    CASE \n      WHEN request_url LIKE '%/ch01/%' THEN 'ch01'\n      WHEN request_url LIKE '%/ch02/%' THEN 'ch02'\n      WHEN request_url LIKE '%/ch03/%' THEN 'ch03'\n      WHEN request_url LIKE '%/ch04/%' THEN 'ch04'\n      WHEN request_url LIKE '%/ch05/%' THEN 'ch05'\n      WHEN request_url LIKE '%/ch06/%' THEN 'ch06'\n      WHEN request_url LIKE '%/ch07/%' THEN 'ch07'\n      WHEN request_url LIKE '%/ch08/%' THEN 'ch08'\n      WHEN request_url LIKE '%/ch09/%' THEN 'ch09'\n      WHEN request_url LIKE '%/ch10/%' THEN 'ch10'\n    END AS channel\n  FROM \"cdn_logs_alibaba_partitioned\".\"cdn_logs_parquet\" \n  WHERE (\n    (year = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '8' HOUR, '%Y')\n     AND month = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '8' HOUR, '%m')\n     AND day = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '8' HOUR, '%d'))\n    OR\n    (year = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '7' HOUR, '%Y')\n     AND month = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '7' HOUR, '%m')\n     AND day = date_format(date_parse('${date_game}', '%Y-%m-%d') + INTERVAL '7' HOUR, '%d'))\n  )\n  AND date_parse(date_time, '%d/%b/%Y:%H:%i:%s') >= date_parse('${date_game} ${start_time}:00', '%Y-%m-%d %H:%i:%s') + INTERVAL '8' HOUR\n  AND date_parse(date_time, '%d/%b/%Y:%H:%i:%s') <= date_parse('${date_game} ${end_time}:00', '%Y-%m-%d %H:%i:%s') + INTERVAL '8' HOUR\n  AND request_url LIKE '%servers8.com/%/live/%'\n  AND (request_url LIKE '%/ch01/%' OR request_url LIKE '%/ch02/%' OR request_url LIKE '%/ch03/%' OR \n       request_url LIKE '%/ch04/%' OR request_url LIKE '%/ch05/%' OR request_url LIKE '%/ch06/%' OR \n       request_url LIKE '%/ch07/%' OR request_url LIKE '%/ch08/%' OR request_url LIKE '%/ch09/%' OR \n       request_url LIKE '%/ch10/%')\n  AND (request_url LIKE '%index.m3u8%' OR request_url LIKE '%ll-index.m3u8%' OR request_url LIKE '%index_720p.m3u8%' OR request_url LIKE '%ll-index_720p.m3u8%')\n) \nWHERE channel IS NOT NULL\nGROUP BY channel\nORDER BY channel;\n",
+          "refId": "A",
+          "table": "access_logs_parquet"
+        }
+      ],
+      "title": "Total View Alibaba",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- Channel Analysis with Unique Tokens per Channel (ch01-ch10)\nSELECT \n  channel,\n  COUNT(DISTINCT c_ip) AS total_unique_ips,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%index.m3u8' THEN 1 END) AS index_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%ll-index.m3u8' THEN 1 END) AS ll_index_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%index_720p.m3u8' THEN 1 END) AS index_720p_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%ll-index_720p.m3u8' THEN 1 END) AS ll_index_720p_requests,\n  \n  -- Unique tokens for each file type\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%index.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_index,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%ll-index.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_ll_index,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%index_720p.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_720p,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%ll-index_720p.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_ll_720p,\n  \n  -- Platform breakdown\n  COUNT(CASE WHEN (cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR cs_user_agent LIKE '%Web0S%' OR \n     cs_user_agent LIKE '%SmartTV%' OR cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR \n     cs_user_agent LIKE '%webOS.TV%') THEN 1 END) AS lg_tv_requests,\n     \n  COUNT(CASE WHEN (cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR cs_user_agent LIKE '%Tizen%' OR \n     cs_user_agent LIKE '%SAMSUNGTV%' OR cs_user_agent LIKE '%Maple%') THEN 1 END) AS samsung_tv_requests,\n     \n  COUNT(CASE WHEN NOT (cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR cs_user_agent LIKE '%Web0S%' OR \n         cs_user_agent LIKE '%SmartTV%' OR cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR \n         cs_user_agent LIKE '%webOS.TV%' OR cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR \n         cs_user_agent LIKE '%Tizen%' OR cs_user_agent LIKE '%SAMSUNGTV%' OR cs_user_agent LIKE '%Maple%') THEN 1 END) AS other_platform_requests\n\nFROM (\n  SELECT *, \n    CASE \n      WHEN cs_uri_stem LIKE '%/ch01/%' THEN 'ch01'\n      WHEN cs_uri_stem LIKE '%/ch02/%' THEN 'ch02'\n      WHEN cs_uri_stem LIKE '%/ch03/%' THEN 'ch03'\n      WHEN cs_uri_stem LIKE '%/ch04/%' THEN 'ch04'\n      WHEN cs_uri_stem LIKE '%/ch05/%' THEN 'ch05'\n      WHEN cs_uri_stem LIKE '%/ch06/%' THEN 'ch06'\n      WHEN cs_uri_stem LIKE '%/ch07/%' THEN 'ch07'\n      WHEN cs_uri_stem LIKE '%/ch08/%' THEN 'ch08'\n      WHEN cs_uri_stem LIKE '%/ch09/%' THEN 'ch09'\n      WHEN cs_uri_stem LIKE '%/ch10/%' THEN 'ch10'\n    END AS channel\n  FROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \n  WHERE year = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%Y')\n    AND month = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%m')\n    AND day = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%d')\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= timestamp '${date_game} ${start_time}'\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= timestamp '${date_game} ${end_time}'\n    AND (cs_uri_stem LIKE '%/ch01/%' OR cs_uri_stem LIKE '%/ch02/%' OR cs_uri_stem LIKE '%/ch03/%' OR \n         cs_uri_stem LIKE '%/ch04/%' OR cs_uri_stem LIKE '%/ch05/%' OR cs_uri_stem LIKE '%/ch06/%' OR \n         cs_uri_stem LIKE '%/ch07/%' OR cs_uri_stem LIKE '%/ch08/%' OR cs_uri_stem LIKE '%/ch09/%' OR \n         cs_uri_stem LIKE '%/ch10/%')\n    AND (cs_uri_stem LIKE '%index.m3u8' OR cs_uri_stem LIKE '%ll-index.m3u8' OR cs_uri_stem LIKE '%index_720p.m3u8' OR cs_uri_stem LIKE '%ll-index_720p.m3u8')\n) \nWHERE channel IS NOT NULL\nGROUP BY channel\nORDER BY channel;\n",
+          "refId": "A",
+          "table": "access_logs_parquet"
+        }
+      ],
+      "title": "Total View CloudFront",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 223
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cs_uri_stem"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 394
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "cf1y36lza90cge"
+          },
+          "format": 1,
+          "rawSQL": "-- Channel Analysis with Unique Tokens per Channel (ch01-ch10)\nSELECT \n  channel,\n  COUNT(DISTINCT c_ip) AS total_unique_ips,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%index.m3u8' THEN 1 END) AS index_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%ll-index.m3u8' THEN 1 END) AS ll_index_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%index_720p.m3u8' THEN 1 END) AS index_720p_requests,\n  COUNT(CASE WHEN cs_uri_stem LIKE '%ll-index_720p.m3u8' THEN 1 END) AS ll_index_720p_requests,\n  \n  -- Unique tokens for each file type\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%index.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_index,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%ll-index.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_ll_index,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%index_720p.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_720p,\n  approx_distinct(CASE WHEN cs_uri_stem LIKE '%ll-index_720p.m3u8' THEN regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) END) AS unique_tokens_ll_720p,\n  \n  -- Platform breakdown\n  COUNT(CASE WHEN (cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR cs_user_agent LIKE '%Web0S%' OR \n     cs_user_agent LIKE '%SmartTV%' OR cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR \n     cs_user_agent LIKE '%webOS.TV%') THEN 1 END) AS lg_tv_requests,\n     \n  COUNT(CASE WHEN (cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR cs_user_agent LIKE '%Tizen%' OR \n     cs_user_agent LIKE '%SAMSUNGTV%' OR cs_user_agent LIKE '%Maple%') THEN 1 END) AS samsung_tv_requests,\n     \n  COUNT(CASE WHEN NOT (cs_user_agent LIKE '%WebOS%' OR cs_user_agent LIKE '%webOS%' OR cs_user_agent LIKE '%Web0S%' OR \n         cs_user_agent LIKE '%SmartTV%' OR cs_user_agent LIKE '%WebAppManager%' OR cs_user_agent LIKE '%LGTV%' OR \n         cs_user_agent LIKE '%webOS.TV%' OR cs_user_agent LIKE '%SMART-TV%' OR cs_user_agent LIKE '%SamsungBrowser%' OR \n         cs_user_agent LIKE '%Tizen%' OR cs_user_agent LIKE '%SAMSUNGTV%' OR cs_user_agent LIKE '%Maple%') THEN 1 END) AS other_platform_requests\n\nFROM (\n  SELECT *, \n    CASE \n      WHEN cs_uri_stem LIKE '%/ch01/%' THEN 'ch01'\n      WHEN cs_uri_stem LIKE '%/ch02/%' THEN 'ch02'\n      WHEN cs_uri_stem LIKE '%/ch03/%' THEN 'ch03'\n      WHEN cs_uri_stem LIKE '%/ch04/%' THEN 'ch04'\n      WHEN cs_uri_stem LIKE '%/ch05/%' THEN 'ch05'\n      WHEN cs_uri_stem LIKE '%/ch06/%' THEN 'ch06'\n      WHEN cs_uri_stem LIKE '%/ch07/%' THEN 'ch07'\n      WHEN cs_uri_stem LIKE '%/ch08/%' THEN 'ch08'\n      WHEN cs_uri_stem LIKE '%/ch09/%' THEN 'ch09'\n      WHEN cs_uri_stem LIKE '%/ch10/%' THEN 'ch10'\n    END AS channel\n  FROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \n  WHERE year = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%Y')\n    AND month = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%m')\n    AND day = date_format(date_parse('${date_game}', '%Y-%m-%d'), '%d')\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= timestamp '${date_game} ${start_time}'\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= timestamp '${date_game} ${end_time}'\n    AND (cs_uri_stem LIKE '%/ch01/%' OR cs_uri_stem LIKE '%/ch02/%' OR cs_uri_stem LIKE '%/ch03/%' OR \n         cs_uri_stem LIKE '%/ch04/%' OR cs_uri_stem LIKE '%/ch05/%' OR cs_uri_stem LIKE '%/ch06/%' OR \n         cs_uri_stem LIKE '%/ch07/%' OR cs_uri_stem LIKE '%/ch08/%' OR cs_uri_stem LIKE '%/ch09/%' OR \n         cs_uri_stem LIKE '%/ch10/%')\n    AND (cs_uri_stem LIKE '%index.m3u8' OR cs_uri_stem LIKE '%ll-index.m3u8' OR cs_uri_stem LIKE '%index_720p.m3u8' OR cs_uri_stem LIKE '%ll-index_720p.m3u8')\n) \nWHERE channel IS NOT NULL\nGROUP BY channel\nORDER BY channel;\n",
+          "refId": "A"
+        }
+      ],
+      "title": "CloudFront Logs (limit to 1000 lines)",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "logs",
+    "athena",
+    "cloudfront"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "ch02",
+          "value": "ch02"
+        },
+        "label": "ChannelName",
+        "name": "channel_name",
+        "options": [
+          {
+            "selected": true,
+            "text": "ch02",
+            "value": "ch02"
+          }
+        ],
+        "query": "ch02",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "2025-11-23",
+          "value": "2025-11-23"
+        },
+        "label": "Date Match",
+        "name": "date_game",
+        "options": [
+          {
+            "selected": true,
+            "text": "2025-11-23",
+            "value": "2025-11-23"
+          }
+        ],
+        "query": "2025-11-23",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "15:00",
+          "value": "15:00"
+        },
+        "label": "Start Time",
+        "name": "start_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "15:00",
+            "value": "15:00"
+          }
+        ],
+        "query": "15:00",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "18:00",
+          "value": "18:00"
+        },
+        "label": "End Time",
+        "name": "end_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "18:00",
+            "value": "18:00"
+          }
+        ],
+        "query": "18:00",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "2025-11-22T23:00:00.000Z",
+    "to": "2025-11-23T22:59:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "CDN Logs - Alibaba",
+  "uid": "cdn-reporting-alibaba",
+  "version": 1
+}

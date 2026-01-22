@@ -1,0 +1,2446 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "cf1y36lza90cge"
+        },
+        "enable": true,
+        "hide": false,
+        "iconColor": "red",
+        "name": "New annotation",
+        "target": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "",
+          "refId": "Anno"
+        }
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 6,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 31,
+      "panels": [],
+      "title": "CMCD",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 33,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Unique SIDs and CIDs\r\n-- Shows unique session and content IDs from CMCD parameters\r\nSELECT\r\n  COUNT(DISTINCT REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1)) AS \"Unique SIDs\",\r\n  COUNT(DISTINCT REGEXP_EXTRACT(cs_uri_query, 'cid%253D%2522([^%]+)%2522', 1)) AS \"Unique CIDs\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_query LIKE '%CMCD%';\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Unique Sessions and Events",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 34,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - LTC Statistics\r\n-- Shows min, avg, max LTC values from CMCD parameters\r\nSELECT\r\n  MIN(CAST(REGEXP_EXTRACT(cs_uri_query, 'ltc%253D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Min LTC\",\r\n  AVG(CAST(REGEXP_EXTRACT(cs_uri_query, 'ltc%253D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Avg LTC\",\r\n  MAX(CAST(REGEXP_EXTRACT(cs_uri_query, 'ltc%253D([0-9]+)', 1) AS DOUBLE)/1000) AS \"Max LTC\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_query LIKE '%ltc%';\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Min/Max Latency (seconds)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Concurrent Views Over Time\r\n-- Shows concurrent views (unique SIDs) over time in 5-minute windows\r\n\r\nSELECT\r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  COUNT(DISTINCT REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1)) AS concurrent_views\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_query LIKE '%CMCD%'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time ASC;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Concurrent Sessions - SID",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - MTP Statistics Over Time\r\n-- Shows min, max, avg MTP values over time from CMCD parameters\r\n\r\nSELECT\r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  MIN(CAST(REGEXP_EXTRACT(cs_uri_query, 'mtp%253D([0-9]+)', 1) AS DOUBLE)) AS \"Min MTP\",\r\n  MAX(CAST(REGEXP_EXTRACT(cs_uri_query, 'mtp%253D([0-9]+)', 1) AS DOUBLE)) AS \"Max MTP\",\r\n  ROUND(AVG(CAST(REGEXP_EXTRACT(cs_uri_query, 'mtp%253D([0-9]+)', 1) AS DOUBLE)), 2) AS \"Avg MTP\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_query LIKE '%CMCD%'\r\n  AND time_taken IS NOT NULL\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "User Bandwith (MTP)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Session Duration Metrics\r\n-- Shows average and max session duration based on first and last request per SID\r\n\r\nWITH session_times AS (\r\n  SELECT \r\n    REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1) AS session_id,\r\n    MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')) AS first_request,\r\n    MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')) AS last_request\r\n  FROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\r\n  WHERE\r\n    year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n    AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n    AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n    AND cs_uri_query LIKE '%CMCD%'\r\n    AND REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1) IS NOT NULL\r\n  GROUP BY REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1)\r\n),\r\nsession_durations AS (\r\n  SELECT \r\n    session_id,\r\n    date_diff('second', first_request, last_request) AS duration_seconds\r\n  FROM session_times\r\n  WHERE first_request != last_request\r\n)\r\n\r\nSELECT\r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', first_request)\r\n    ELSE date_trunc('day', first_request)\r\n  END as time,\r\n  AVG(duration_seconds) AS avg_session_duration_seconds,\r\n  MAX(duration_seconds) AS max_session_duration_seconds\r\nFROM session_times st\r\nJOIN session_durations sd ON st.session_id = sd.session_id\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', first_request)\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', first_request)\r\n    ELSE date_trunc('day', first_request)\r\n  END\r\nORDER BY time ASC;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Sessions Duration - Max/Avg Session Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 41,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Session Duration Distribution\r\n-- Session duration distribution histogram\r\n\r\nSELECT \r\n  duration_bucket,\r\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nFROM (\r\n  SELECT \r\n    CASE \r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 30 THEN '0-30sec'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 300 THEN '30sec-5min'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 900 THEN '5min-15min'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 1800 THEN '15min-30min'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 3600 THEN '30min-60min'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 5400 THEN '60min-90min'\r\n      WHEN date_diff('second', \r\n        MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n        MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n      ) <= 7200 THEN '90min-120min'\r\n      ELSE '120min+'\r\n    END as duration_bucket\r\n  FROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\r\n  WHERE\r\n    year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n    AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n    AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n    AND cs_uri_query LIKE '%CMCD%'\r\n    AND REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1) IS NOT NULL\r\n  GROUP BY REGEXP_EXTRACT(cs_uri_query, 'sid%253D%2522([^%]+)%2522', 1)\r\n  HAVING date_diff('second', \r\n    MIN(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s')),\r\n    MAX(date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  ) > 0\r\n) session_data\r\nGROUP BY duration_bucket\r\nORDER BY \r\n  CASE \r\n    WHEN duration_bucket = '0-30sec' THEN 1\r\n    WHEN duration_bucket = '30sec-5min' THEN 2\r\n    WHEN duration_bucket = '5min-15min' THEN 3\r\n    WHEN duration_bucket = '15min-30min' THEN 4\r\n    WHEN duration_bucket = '30min-60min' THEN 5\r\n    WHEN duration_bucket = '60min-90min' THEN 6\r\n    WHEN duration_bucket = '90min-120min' THEN 7\r\n    WHEN duration_bucket = '120min+' THEN 8\r\n  END;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Sessions Duration - Avg Session Duration",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 7,
+      "panels": [],
+      "title": "General KPIs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 26
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "bf0ycdbma6u4ge"
+          },
+          "format": 1,
+          "rawSQL": "SELECT \n  COUNT(*) as \"Total Requests\",\n  ROUND(SUM(CAST(sc_bytes AS bigint)) / 1024.0 / 1024.0, 2) as \"Total Volume (MB)\",\n  ROUND(SUM(CAST(sc_bytes AS bigint)) / 1024.0 / 1024.0 / 1024.0, 2) as \"Total Volume (GB)\",\n  ROUND(SUM(CAST(sc_bytes AS bigint)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 3) as \"Total Volume (TB)\"\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\nWHERE\n  -- String-based partition filtering for cross-month support\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\n  -- Time filtering within partitions\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\n  AND sc_bytes IS NOT NULL\n  AND sc_bytes != '-';\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Request/Egress Volume",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 26
+      },
+      "id": 1,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "aezq36ev3dclce"
+          },
+          "format": 1,
+          "rawSQL": "SELECT \n  CAST(sc_status AS VARCHAR) as metric,\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as value\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \nWHERE\n  -- String-based partition filtering for cross-month support\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\n  -- Time filtering within partitions\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\n  AND sc_status IS NOT NULL\nGROUP BY sc_status\nORDER BY value DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Status Code",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 6,
+        "x": 12,
+        "y": 26
+      },
+      "id": 39,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - POP Request Distribution\r\n-- Shows percentage of total requests per 3-letter POP code\r\n\r\nSELECT\r\n  SUBSTRING(x_edge_location, 1, 3) AS pop_code,  -- Extract first 3 letters from POP\r\n  COUNT(*) AS request_count,\r\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) AS percentage\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\r\nWHERE\r\n  -- Partition filtering for time range\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01','02','03','04','05','06','07','08','09','10','11','12',\r\n              '13','14','15','16','17','18','19','20','21','22','23','24',\r\n              '25','26','27','28','29','30','31')\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND x_edge_location IS NOT NULL\r\nGROUP BY \r\n  SUBSTRING(x_edge_location, 1, 3)\r\nORDER BY \r\n  percentage DESC;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "CloudFront Pop Usage",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "request_count",
+                  "percentage",
+                  "500ms-1s percentage",
+                  "200-500ms percentage",
+                  "0-100ms request_count",
+                  "500ms-1s request_count",
+                  "5-10s request_count",
+                  "500ms-1s",
+                  "AMS 2-5s"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 6,
+        "x": 18,
+        "y": 26
+      },
+      "id": 38,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Response Time Distribution by POP\r\n-- Response time distribution histogram by 3-letter POP code\r\n\r\nSELECT \r\n  SUBSTRING(x_edge_location, 1, 3) AS pop_code,  -- Extract first 3 letters from POP\r\n  CASE \r\n    WHEN CAST(time_taken AS double) < 0.1 THEN '0-100ms'\r\n    WHEN CAST(time_taken AS double) < 0.2 THEN '100-200ms'\r\n    WHEN CAST(time_taken AS double) < 0.5 THEN '200-500ms'\r\n    WHEN CAST(time_taken AS double) < 1.0 THEN '500ms-1s'\r\n    WHEN CAST(time_taken AS double) < 2.0 THEN '1-2s'\r\n    WHEN CAST(time_taken AS double) < 5.0 THEN '2-5s'\r\n    WHEN CAST(time_taken AS double) < 10.0 THEN '5-10s'\r\n    WHEN CAST(time_taken AS double) < 30.0 THEN '10-30s'\r\n    ELSE '30s+'\r\n  END AS response_time_bucket,\r\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY SUBSTRING(x_edge_location, 1, 3)), 2) AS percentage\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- Partition filtering for time range\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01','02','03','04','05','06','07','08','09','10','11','12',\r\n              '13','14','15','16','17','18','19','20','21','22','23','24',\r\n              '25','26','27','28','29','30','31')\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND time_taken IS NOT NULL\r\n  AND time_taken != '-'\r\n  AND CAST(time_taken AS double) > 0\r\n  AND x_edge_location IS NOT NULL\r\nGROUP BY \r\n  SUBSTRING(x_edge_location, 1, 3),\r\n  CASE \r\n    WHEN CAST(time_taken AS double) < 0.1 THEN '0-100ms'\r\n    WHEN CAST(time_taken AS double) < 0.2 THEN '100-200ms'\r\n    WHEN CAST(time_taken AS double) < 0.5 THEN '200-500ms'\r\n    WHEN CAST(time_taken AS double) < 1.0 THEN '500ms-1s'\r\n    WHEN CAST(time_taken AS double) < 2.0 THEN '1-2s'\r\n    WHEN CAST(time_taken AS double) < 5.0 THEN '2-5s'\r\n    WHEN CAST(time_taken AS double) < 10.0 THEN '5-10s'\r\n    WHEN CAST(time_taken AS double) < 30.0 THEN '10-30s'\r\n    ELSE '30s+'\r\n  END\r\nORDER BY \r\n  pop_code,\r\n  CASE \r\n    WHEN response_time_bucket = '0-100ms' THEN 1\r\n    WHEN response_time_bucket = '100-200ms' THEN 2\r\n    WHEN response_time_bucket = '200-500ms' THEN 3\r\n    WHEN response_time_bucket = '500ms-1s' THEN 4\r\n    WHEN response_time_bucket = '1-2s' THEN 5\r\n    WHEN response_time_bucket = '2-5s' THEN 6\r\n    WHEN response_time_bucket = '5-10s' THEN 7\r\n    WHEN response_time_bucket = '10-30s' THEN 8\r\n    WHEN response_time_bucket = '30s+' THEN 9\r\n  END;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "CloudFront POP Distribution Time",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "request_count",
+                  "percentage",
+                  "500ms-1s percentage",
+                  "200-500ms percentage",
+                  "0-100ms request_count",
+                  "500ms-1s request_count",
+                  "5-10s request_count",
+                  "500ms-1s",
+                  "10-30s"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 33
+      },
+      "id": 23,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Response Time Distribution\r\n-- Response time distribution histogram\r\n-- X-axis: Response time buckets (ranges)\r\n-- Y-axis: Number of requests in each bucket\r\n\r\nSELECT \r\n  CASE \r\n    WHEN CAST(time_taken AS double) < 0.1 THEN '0-100ms'\r\n    WHEN CAST(time_taken AS double) < 0.2 THEN '100-200ms'\r\n    WHEN CAST(time_taken AS double) < 0.5 THEN '200-500ms'\r\n    WHEN CAST(time_taken AS double) < 1.0 THEN '500ms-1s'\r\n    WHEN CAST(time_taken AS double) < 2.0 THEN '1-2s'\r\n    WHEN CAST(time_taken AS double) < 5.0 THEN '2-5s'\r\n    WHEN CAST(time_taken AS double) < 10.0 THEN '5-10s'\r\n    WHEN CAST(time_taken AS double) < 30.0 THEN '10-30s'\r\n    ELSE '30s+'\r\n  END as response_time_bucket,\r\n  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  -- Filter valid response times\r\n  AND time_taken IS NOT NULL\r\n  AND time_taken != '-'\r\n  AND CAST(time_taken AS double) > 0\r\nGROUP BY \r\n  CASE \r\n    WHEN CAST(time_taken AS double) < 0.1 THEN '0-100ms'\r\n    WHEN CAST(time_taken AS double) < 0.2 THEN '100-200ms'\r\n    WHEN CAST(time_taken AS double) < 0.5 THEN '200-500ms'\r\n    WHEN CAST(time_taken AS double) < 1.0 THEN '500ms-1s'\r\n    WHEN CAST(time_taken AS double) < 2.0 THEN '1-2s'\r\n    WHEN CAST(time_taken AS double) < 5.0 THEN '2-5s'\r\n    WHEN CAST(time_taken AS double) < 10.0 THEN '5-10s'\r\n    WHEN CAST(time_taken AS double) < 30.0 THEN '10-30s'\r\n    ELSE '30s+'\r\n  END\r\nORDER BY \r\n  CASE \r\n    WHEN response_time_bucket = '0-100ms' THEN 1\r\n    WHEN response_time_bucket = '100-200ms' THEN 2\r\n    WHEN response_time_bucket = '200-500ms' THEN 3\r\n    WHEN response_time_bucket = '500ms-1s' THEN 4\r\n    WHEN response_time_bucket = '1-2s' THEN 5\r\n    WHEN response_time_bucket = '2-5s' THEN 6\r\n    WHEN response_time_bucket = '5-10s' THEN 7\r\n    WHEN response_time_bucket = '10-30s' THEN 8\r\n    WHEN response_time_bucket = '30s+' THEN 9\r\n  END;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Response Time Distribution",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "percentage"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 33
+      },
+      "id": 32,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - File Type Distribution\r\n-- Shows file type distribution for pie chart\r\n\r\nSELECT \r\n  sc_content_type as file_type,\r\n  round((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) as percentage\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND sc_content_type IS NOT NULL\r\n  AND sc_content_type != '-'\r\nGROUP BY sc_content_type \r\nORDER BY percentage DESC;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "FileType",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "bf0ycdbma6u4ge"
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Bandwidth\nSELECT\n  CASE\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n  END as time,\n  (SUM(CAST(sc_bytes AS bigint)) * 8) / (1024 * 1024 ) /\n  CASE\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN 60\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN 60\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN 60\n    ELSE 3600\n  END as \"Bandwidth Mbps\"\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\nWHERE\n  -- String-based partition filtering for cross-month support\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\n  -- Time filtering within partitions\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\n  AND sc_bytes IS NOT NULL\n  AND sc_bytes != '-'\nGROUP BY\n  CASE\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n  END\nORDER BY time;\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Bandwidth (Mbps)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Cache Hit Ratio %"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "bf0ycdbma6u4ge"
+          },
+          "format": 1,
+          "rawSQL": "SELECT \n  CASE \n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n  END as time,\n  ROUND(\n    (COUNT(CASE WHEN x_edge_result_type = 'Hit' THEN 1 END) + \n     COUNT(CASE WHEN x_edge_result_type = 'RefreshHit' THEN 1 END)) * 100.0 / COUNT(*), 2\n  ) as \"Cache Hit Ratio %\",\n  ROUND(\n    COUNT(CASE WHEN x_edge_result_type = 'Miss' THEN 1 END) * 100.0 / COUNT(*), 2\n  ) as \"Cache Miss Ratio %\",\n  ROUND(\n    COUNT(CASE WHEN x_edge_result_type = 'Error' THEN 1 END) * 100.0 / COUNT(*), 2\n  ) as \"Error Ratio %\"\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \nWHERE\n  -- String-based partition filtering for cross-month support\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\n  -- Time filtering within partitions\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\n  AND x_edge_result_type != '-'\nGROUP BY \n  CASE \n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n  END\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Hit Ratio",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 50
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Req/s\r\n-- Requests per second query with precise time grouping\r\n-- Shows requests per second with minute-level precision for short time ranges\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  -- Calculate requests per second\r\n  -- Divide total requests by time interval duration: 60s for minutes, 3600s for hours\r\n  COUNT(*) / \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN 60    -- seconds in a minute\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN 60    -- seconds in a minute\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN 60  -- seconds in a minute\r\n    ELSE 3600  -- seconds in an hour\r\n  END as \"Requests per Second\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Req/sec",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 50
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Total Request\r\n-- Request counts by status code with precise time grouping\r\n-- Shows total requests and status code breakdown with minute-level precision for short time ranges\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  COUNT(*) as \"Total Requests\",\r\n  COUNT(CASE WHEN CAST(sc_status AS int) BETWEEN 200 AND 299 THEN 1 END) as \"2xx Success\",\r\n  COUNT(CASE WHEN CAST(sc_status AS int) BETWEEN 400 AND 499 THEN 1 END) as \"4xx Client Error\",\r\n  COUNT(CASE WHEN CAST(sc_status AS int) BETWEEN 500 AND 599 THEN 1 END) as \"5xx Server Error\",\r\n  ROUND(COUNT(CASE WHEN CAST(sc_status AS int) BETWEEN 400 AND 499 THEN 1 END) * 100.0 / COUNT(*), 2) as \"4xx Error %\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  -- Filter out invalid status codes\r\n  AND sc_status IS NOT NULL\r\n  AND sc_status != '-'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Request",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Avg Response Time (s)"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 58
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "cdn_logs_cloudfront_partitioned",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Response Time\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  AVG(CAST(time_taken AS double)) AS \"Avg Response Time (s)\",\r\n  MAX(CAST(time_taken AS double)) AS \"Max Response Time (s)\",\r\n  AVG(CAST(time_to_first_byte AS double)) AS \"Avg TTFB (s)\",\r\n  MAX(CAST(time_to_first_byte AS double)) AS \"Max TTFB (s)\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  -- Filter out invalid response times\r\n  AND time_taken IS NOT NULL\r\n  AND time_taken != '-'\r\n  AND time_to_first_byte IS NOT NULL\r\n  AND time_to_first_byte != '-'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Max Response Time",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      },
+      "id": 24,
+      "panels": [],
+      "title": "Video Streaming",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 67
+      },
+      "id": 37,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Total Request per Channel and Manifest\r\n-- Shows request counts by channel and manifest type over time\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END AS time,\r\n  \r\n  -- index.m3u8\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01/%index.m3u8' THEN 1 END) AS \"ch01_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02/%index.m3u8' THEN 1 END) AS \"ch02_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03/%index.m3u8' THEN 1 END) AS \"ch03_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04/%index.m3u8' THEN 1 END) AS \"ch04_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05/%index.m3u8' THEN 1 END) AS \"ch05_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06/%index.m3u8' THEN 1 END) AS \"ch06_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07/%index.m3u8' THEN 1 END) AS \"ch07_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08/%index.m3u8' THEN 1 END) AS \"ch08_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09/%index.m3u8' THEN 1 END) AS \"ch09_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10/%index.m3u8' THEN 1 END) AS \"ch10_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11/%index.m3u8' THEN 1 END) AS \"ch11_index\",\r\n\r\n  -- ll-index.m3u8\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01/%ll-index.m3u8' THEN 1 END) AS \"ch01_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02/%ll-index.m3u8' THEN 1 END) AS \"ch02_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03/%ll-index.m3u8' THEN 1 END) AS \"ch03_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04/%ll-index.m3u8' THEN 1 END) AS \"ch04_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05/%ll-index.m3u8' THEN 1 END) AS \"ch05_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06/%ll-index.m3u8' THEN 1 END) AS \"ch06_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07/%ll-index.m3u8' THEN 1 END) AS \"ch07_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08/%ll-index.m3u8' THEN 1 END) AS \"ch08_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09/%ll-index.m3u8' THEN 1 END) AS \"ch09_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10/%ll-index.m3u8' THEN 1 END) AS \"ch10_ll_index\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11/%ll-index.m3u8' THEN 1 END) AS \"ch11_ll_index\",\r\n\r\n  -- index-720p.m3u8\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01/%index-720p.m3u8' THEN 1 END) AS \"ch01_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02/%index-720p.m3u8' THEN 1 END) AS \"ch02_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03/%index-720p.m3u8' THEN 1 END) AS \"ch03_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04/%index-720p.m3u8' THEN 1 END) AS \"ch04_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05/%index-720p.m3u8' THEN 1 END) AS \"ch05_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06/%index-720p.m3u8' THEN 1 END) AS \"ch06_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07/%index-720p.m3u8' THEN 1 END) AS \"ch07_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08/%index-720p.m3u8' THEN 1 END) AS \"ch08_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09/%index-720p.m3u8' THEN 1 END) AS \"ch09_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10/%index-720p.m3u8' THEN 1 END) AS \"ch10_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11/%index-720p.m3u8' THEN 1 END) AS \"ch11_index_720p\",\r\n\r\n  -- ll-index-720p.m3u8\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01/%ll-index-720p.m3u8' THEN 1 END) AS \"ch01_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02/%ll-index-720p.m3u8' THEN 1 END) AS \"ch02_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03/%ll-index-720p.m3u8' THEN 1 END) AS \"ch03_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04/%ll-index-720p.m3u8' THEN 1 END) AS \"ch04_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05/%ll-index-720p.m3u8' THEN 1 END) AS \"ch05_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06/%ll-index-720p.m3u8' THEN 1 END) AS \"ch06_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07/%ll-index-720p.m3u8' THEN 1 END) AS \"ch07_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08/%ll-index-720p.m3u8' THEN 1 END) AS \"ch08_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09/%ll-index-720p.m3u8' THEN 1 END) AS \"ch09_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10/%ll-index-720p.m3u8' THEN 1 END) AS \"ch10_ll_index_720p\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11/%ll-index-720p.m3u8' THEN 1 END) AS \"ch11_ll_index_720p\",\r\n\r\n  -- manifest.mpd\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01/%manifest.mpd' THEN 1 END) AS \"ch01_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02/%manifest.mpd' THEN 1 END) AS \"ch02_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03/%manifest.mpd' THEN 1 END) AS \"ch03_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04/%manifest.mpd' THEN 1 END) AS \"ch04_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05/%manifest.mpd' THEN 1 END) AS \"ch05_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06/%manifest.mpd' THEN 1 END) AS \"ch06_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07/%manifest.mpd' THEN 1 END) AS \"ch07_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08/%manifest.mpd' THEN 1 END) AS \"ch08_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09/%manifest.mpd' THEN 1 END) AS \"ch09_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10/%manifest.mpd' THEN 1 END) AS \"ch10_manifest\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11/%manifest.mpd' THEN 1 END) AS \"ch11_manifest\"\r\n\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND (\r\n    cs_uri_stem LIKE '%index.m3u8' OR\r\n    cs_uri_stem LIKE '%ll-index.m3u8' OR\r\n    cs_uri_stem LIKE '%index-720p.m3u8' OR\r\n    cs_uri_stem LIKE '%ll-index-720p.m3u8' OR\r\n    cs_uri_stem LIKE '%manifest.mpd'\r\n  )\r\nGROUP BY 1\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Request per channel start",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 67
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Total Request per channel\r\n-- Channel requests time series with precise time grouping\r\n-- Shows request counts by channel over time with minute-level precision for short ranges\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch01%' THEN 1 END) as \"ch01\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch02%' THEN 1 END) as \"ch02\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch03%' THEN 1 END) as \"ch03\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch04%' THEN 1 END) as \"ch04\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch05%' THEN 1 END) as \"ch05\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch06%' THEN 1 END) as \"ch06\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch07%' THEN 1 END) as \"ch07\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch08%' THEN 1 END) as \"ch08\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch09%' THEN 1 END) as \"ch09\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch10%' THEN 1 END) as \"ch10\",\r\n  COUNT(CASE WHEN cs_uri_stem LIKE '%/ch11%' THEN 1 END) as \"ch11\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Request per channel",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Fragment Avg Response Time"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 75
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Response Time per File Type\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  -- Master Playlist\r\n  AVG(CASE WHEN (\r\n    cs_uri_stem LIKE '%index.m3u8' OR \r\n    cs_uri_stem LIKE '%ll-index.m3u8' OR \r\n    cs_uri_stem LIKE '%index-720p.m3u8' OR \r\n    cs_uri_stem LIKE '%manifest.mpd'\r\n  ) THEN CAST(time_taken AS double) END) as \"Master Avg Response Time\",\r\n  MAX(CASE WHEN (\r\n    cs_uri_stem LIKE '%index.m3u8' OR \r\n    cs_uri_stem LIKE '%ll-index.m3u8' OR \r\n    cs_uri_stem LIKE '%index-720p.m3u8' OR \r\n    cs_uri_stem LIKE '%manifest.mpd'\r\n  ) THEN CAST(time_taken AS double) END) as \"Master Max Response Time\",\r\n  \r\n  -- Child Playlist\r\n  AVG(CASE WHEN (\r\n    cs_uri_stem LIKE '%.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%index.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%ll-index.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%index-720p.m3u8'\r\n  ) THEN CAST(time_taken AS double) END) as \"Child Avg Response Time\",\r\n  MAX(CASE WHEN (\r\n    cs_uri_stem LIKE '%.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%index.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%ll-index.m3u8' AND \r\n    cs_uri_stem NOT LIKE '%index-720p.m3u8'\r\n  ) THEN CAST(time_taken AS double) END) as \"Child Max Response Time\",\r\n  \r\n  -- Fragments\r\n  AVG(CASE WHEN cs_uri_stem LIKE '%.mp4' THEN CAST(time_taken AS double) END) as \"Fragment Avg Response Time\",\r\n  MAX(CASE WHEN cs_uri_stem LIKE '%.mp4' THEN CAST(time_taken AS double) END) as \"Fragment Max Response Time\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND time_taken IS NOT NULL\r\n  AND time_taken != '-'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Response Time per type (s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 75
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Error Rate per Channel\r\n-- Shows error rates by channel over time with precise time grouping\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  -- Channel 01\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch01%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch01%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch01_error_pct\",\r\n  -- Channel 02\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch02%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch02%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch02_error_pct\",\r\n  -- Channel 03\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch03%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch03%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch03_error_pct\",\r\n  -- Channel 04\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch04%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch04%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch04_error_pct\",\r\n  -- Channel 05\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch05%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch05%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch05_error_pct\",\r\n  -- Channel 06\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch06%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch06%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch06_error_pct\",\r\n  -- Channel 07\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch07%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch07%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch07_error_pct\",\r\n  -- Channel 08\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch08%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch08%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch08_error_pct\",\r\n  -- Channel 09\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch09%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch09%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch09_error_pct\",\r\n  -- Channel 10\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch10%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch10%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch10_error_pct\",\r\n  -- Channel 11\r\n  round(approx_distinct(case when cs_uri_stem like '%/ch11%' and CAST(sc_status AS int) >= 400 then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) * 100.0 /\r\n       nullif(approx_distinct(case when cs_uri_stem like '%/ch11%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end), 0), 2) as \"ch11_error_pct\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) != ''\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Long Token - Error Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 83
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Unique Tokens per Channel\r\n-- Shows unique token counts by channel over time with precise time grouping\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  approx_distinct(case when cs_uri_stem like '%/ch01%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch01\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch02%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch02\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch03%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch03\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch04%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch04\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch05%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch05\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch06%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch06\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch07%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch07\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch08%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch08\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch09%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch09\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch10%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch10\",\r\n  approx_distinct(case when cs_uri_stem like '%/ch11%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"ch11\",\r\n  approx_distinct(case when cs_uri_stem not like '%/ch01%' and cs_uri_stem not like '%/ch02%' and cs_uri_stem not like '%/ch03%' and cs_uri_stem not like '%/ch04%' and cs_uri_stem not like '%/ch05%' and cs_uri_stem not like '%/ch06%' and cs_uri_stem not like '%/ch07%' and cs_uri_stem not like '%/ch08%' and cs_uri_stem not like '%/ch09%' and cs_uri_stem not like '%/ch10%' and cs_uri_stem not like '%/ch11%' then regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) end) as \"others\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) != ''\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Concurrent Sessions - Long Token",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 83
+      },
+      "id": 30,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Video Rendition Distribution\r\n-- Shows video rendition request counts for pie chart\r\n\r\nSELECT \r\n  '2160p' as rendition, count(*) as request_count\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE \r\n  year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y')\r\n  AND month >= date_format($__timeFrom(), '%m') AND month <= date_format($__timeTo(), '%m')\r\n  AND day >= date_format($__timeFrom(), '%d') AND day <= date_format($__timeTo(), '%d')\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_stem like '%__2160p%' AND cs_uri_stem like '%.mp4'\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  '1080p' as rendition, count(*) as request_count\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE \r\n  year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y')\r\n  AND month >= date_format($__timeFrom(), '%m') AND month <= date_format($__timeTo(), '%m')\r\n  AND day >= date_format($__timeFrom(), '%d') AND day <= date_format($__timeTo(), '%d')\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_stem like '%__1080p%' AND cs_uri_stem like '%.mp4'\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  '720p' as rendition, count(*) as request_count\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE \r\n  year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y')\r\n  AND month >= date_format($__timeFrom(), '%m') AND month <= date_format($__timeTo(), '%m')\r\n  AND day >= date_format($__timeFrom(), '%d') AND day <= date_format($__timeTo(), '%d')\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_stem like '%__720p%' AND cs_uri_stem like '%.mp4'\r\n\r\nUNION ALL\r\n\r\nSELECT \r\n  '432p' as rendition, count(*) as request_count\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND cs_uri_stem like '%__432p%' AND cs_uri_stem like '%.mp4'\r\n\r\n\r\n\r\nORDER BY request_count DESC;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Video Rendition - Request %",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "2160p",
+                  "1080p",
+                  "720p",
+                  "432p"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 91
+      },
+      "id": 29,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "-- CLOUDFRONT LOG DASHBOARD - Video Rendition Usage\r\n-- Shows video rendition request counts over time with precise time grouping\r\n\r\nSELECT \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END as time,\r\n  count(case when cs_uri_stem like '%__2160p%' and cs_uri_stem like '%.mp4' then 1 end) as \"2160p\",\r\n  count(case when cs_uri_stem like '%__1080p%' and cs_uri_stem like '%.mp4' then 1 end) as \"1080p\",\r\n  count(case when cs_uri_stem like '%__720p%' and cs_uri_stem like '%.mp4' then 1 end) as \"720p\",\r\n  count(case when cs_uri_stem like '%__432p%' and cs_uri_stem like '%.mp4' then 1 end) as \"432p\",\r\n  count(case when cs_uri_stem like '%segment__4%' and cs_uri_stem like '%.mp4' then 1 end) as \"audio1\",\r\n  count(case when cs_uri_stem like '%segment__5%' and cs_uri_stem like '%.mp4' then 1 end) as \"audio2\",\r\n  count(case when cs_uri_stem like '%segment__6%' and cs_uri_stem like '%.mp4' then 1 end) as \"audio3\",\r\n  count(case when cs_uri_stem like '%segment__7%' and cs_uri_stem like '%.mp4' then 1 end) as \"audio4\"\r\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\" \r\nWHERE\r\n  -- String-based partition filtering for cross-month support\r\n  year IN (date_format($__timeFrom(), '%Y'), date_format($__timeTo(), '%Y'))\r\n  AND month IN (date_format($__timeFrom(), '%m'), date_format($__timeTo(), '%m'))\r\n  AND day IN ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31')\r\n  -- Time filtering within partitions\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\r\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\r\n  AND (cs_uri_stem like '%__2160p%' or cs_uri_stem like '%__1080p%' or cs_uri_stem like '%__720p%' or cs_uri_stem like '%__432p%' or cs_uri_stem like '%segment__4%' or cs_uri_stem like '%segment__5%' or cs_uri_stem like '%segment__6%' or cs_uri_stem like '%segment__7%')\r\n  AND cs_uri_stem like '%.mp4'\r\nGROUP BY \r\n  CASE \r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 168 THEN date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n    ELSE date_trunc('day', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\r\n  END\r\nORDER BY time;\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Video Rendition - Usage over time",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "cloudfront",
+    "analytics"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2025-09-09T22:00:00.000Z",
+    "to": "2025-09-11T21:59:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "Europe/Paris",
+  "title": "CloudFront CDN Logs - QoS Performance",
+  "uid": "cloudfront_cdn_logs",
+  "version": 29
+}

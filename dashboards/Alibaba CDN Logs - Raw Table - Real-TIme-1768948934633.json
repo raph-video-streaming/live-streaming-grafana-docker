@@ -1,0 +1,744 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 3,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 303
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n    client_ip,\r\n    COUNT(*) AS total_requests\r\nWHERE\r\n (${http_method:sqlstring} = '' OR method = ${http_method:sqlstring})\r\n    AND (${request_url:sqlstring} = '' OR uri LIKE CONCAT('%', ${request_url:sqlstring}, '%'))\r\n    AND (${client_ip:sqlstring} = '' OR client_ip LIKE CONCAT('%', ${client_ip:sqlstring}, '%'))\r\n    AND (${cache_status:sqlstring} = '' OR hit_info = ${cache_status:sqlstring})\r\n    AND (${http_status:sqlstring} = '' OR CAST(return_code AS VARCHAR) = ${http_status:sqlstring})\r\n    AND (${user_agent:sqlstring} = '' OR user_agent LIKE CONCAT('%', ${user_agent:sqlstring}, '%'))\r\n    AND (${referrer:sqlstring} = '' OR refer_domain LIKE CONCAT('%', ${referrer:sqlstring}, '%'))\r\nGROUP BY\r\n    client_ip\r\nORDER BY\r\n    total_requests DESC\r\nLIMIT 10\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "",
+          "ycol": ""
+        }
+      ],
+      "title": "TOP 10 Client_IP",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 303
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 7,
+        "x": 7,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n    regexp_extract(uri, '/live/([^/]+)/', 1) as channel,\r\n    COUNT(*) AS total_requests\r\nWHERE\r\n  (${http_method:sqlstring} = '' OR method = ${http_method:sqlstring})\r\n    AND (${request_url:sqlstring} = '' OR uri LIKE CONCAT('%', ${request_url:sqlstring}, '%'))\r\n    AND (${client_ip:sqlstring} = '' OR client_ip LIKE CONCAT('%', ${client_ip:sqlstring}, '%'))\r\n    AND (${cache_status:sqlstring} = '' OR hit_info = ${cache_status:sqlstring})\r\n    AND (${http_status:sqlstring} = '' OR CAST(return_code AS VARCHAR) = ${http_status:sqlstring})\r\n    AND (${user_agent:sqlstring} = '' OR user_agent LIKE CONCAT('%', ${user_agent:sqlstring}, '%'))\r\n    AND (${referrer:sqlstring} = '' OR refer_domain LIKE CONCAT('%', ${referrer:sqlstring}, '%'))\r\nGROUP BY\r\n    channel\r\nORDER BY\r\n    total_requests DESC\r\nLIMIT 10\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "",
+          "ycol": ""
+        }
+      ],
+      "title": "TOP Channel",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 303
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 7,
+        "x": 14,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "* |\r\nSELECT\r\n    regexp_extract(uri, '/([^/]+)/live/', 1) as token,\r\n    COUNT(*) AS total_requests\r\nWHERE\r\n (${http_method:sqlstring} = '' OR method = ${http_method:sqlstring})\r\n    AND (${request_url:sqlstring} = '' OR uri LIKE CONCAT('%', ${request_url:sqlstring}, '%'))\r\n    AND (${client_ip:sqlstring} = '' OR client_ip LIKE CONCAT('%', ${client_ip:sqlstring}, '%'))\r\n    AND (${cache_status:sqlstring} = '' OR hit_info = ${cache_status:sqlstring})\r\n    AND (${http_status:sqlstring} = '' OR CAST(return_code AS VARCHAR) = ${http_status:sqlstring})\r\n    AND (${user_agent:sqlstring} = '' OR user_agent LIKE CONCAT('%', ${user_agent:sqlstring}, '%'))\r\n    AND (${referrer:sqlstring} = '' OR refer_domain LIKE CONCAT('%', ${referrer:sqlstring}, '%'))\r\nGROUP BY\r\n    token\r\nORDER BY\r\n    total_requests DESC\r\nLIMIT 10\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "",
+          "ycol": ""
+        }
+      ],
+      "title": "TOP Long Token",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "*\r\n| select \r\n    __time__ - (__time__ % 300) as time,\r\n        COUNT(*) AS total_requests\r\nfrom log\r\nWHERE\r\n     (${http_method:sqlstring} = '' OR method = ${http_method:sqlstring})\r\n    AND (${request_url:sqlstring} = '' OR uri LIKE CONCAT('%', ${request_url:sqlstring}, '%'))\r\n    AND (${client_ip:sqlstring} = '' OR client_ip LIKE CONCAT('%', ${client_ip:sqlstring}, '%'))\r\n    AND (${cache_status:sqlstring} = '' OR hit_info = ${cache_status:sqlstring})\r\n    AND (${http_status:sqlstring} = '' OR CAST(return_code AS VARCHAR) = ${http_status:sqlstring})\r\n    AND (${user_agent:sqlstring} = '' OR user_agent LIKE CONCAT('%', ${user_agent:sqlstring}, '%'))\r\n    AND (${referrer:sqlstring} = '' OR refer_domain LIKE CONCAT('%', ${referrer:sqlstring}, '%'))\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "time",
+          "ycol": ""
+        }
+      ],
+      "title": "Total Request (over 5mn period)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 6,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "*\r\n| select\r\n    count(*) as total_requests,\r\n    approx_distinct(client_ip) AS client_ip,\r\n    approx_distinct(refer_domain) AS referrer,\r\n  \r\n    approx_distinct(method) AS http_method,\r\n    approx_distinct(regexp_extract(uri, '/live/([^/]+)/', 1)) AS channels,\r\n    approx_distinct(regexp_extract(uri, '/live/[^/]+/([^/]+)', 1)) AS file_name,\r\n    approx_distinct(regexp_extract(uri, '/([^/]+)/live/', 1)) AS long_token,\r\n    approx_distinct(uri) AS request_url,\r\n\r\n    approx_distinct(return_code) AS http_status,\r\n    approx_distinct(hit_info) AS cache_status,\r\n    approx_distinct(user_agent) AS user_agent,\r\n    approx_distinct(content_type) AS file_type,\r\n    approx_distinct(domain) AS access_ip\r\nfrom log\r\nwhere\r\n  ('${http_method}' = '' OR method = '${http_method}')\r\n  AND ('${request_url}' = '' OR uri LIKE CONCAT('%', '${request_url}', '%'))\r\n  AND ('${client_ip}' = '' OR client_ip LIKE CONCAT('%', '${client_ip}', '%'))\r\n  AND ('${cache_status}' = '' OR hit_info = '${cache_status}')\r\n  AND ('${http_status}' = '' OR CAST(return_code AS VARCHAR) = '${http_status}')\r\n  AND ('${user_agent}' = '' OR user_agent LIKE CONCAT('%', '${user_agent}', '%'))\r\n  AND ('${referrer}' = '' OR refer_domain LIKE CONCAT('%', '${referrer}', '%'))\r\n",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "stat",
+          "ycol": ""
+        }
+      ],
+      "title": "Total Unique Values",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "aliyun-log-service-datasource",
+        "uid": "cf1suxi0jj4e8b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "http_method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_url"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 3928
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "http_status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "long_token"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 526
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "channel_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "file_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 191
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "response_time"
+          }
+        ]
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "currentPage": 1,
+          "datasource": {
+            "type": "aliyun-log-service-datasource",
+            "uid": "cf1suxi0jj4e8b"
+          },
+          "hide": false,
+          "logsPerPage": 100,
+          "powerSql": false,
+          "query": "*\r\n| select\r\n    __time__ AS time,\r\n    client_ip,\r\n    return_code AS http_status,\r\n    method AS http_method,\r\n    regexp_extract(uri, '/live/([^/]+)/', 1) as channel_name,\r\n    regexp_extract(uri, '/live/[^/]+/([^/]+)', 1) as file_name,\r\n    regexp_extract(uri, '/([^/]+)/live/', 1) as long_token,\r\n\r\n    uri AS request_url,\r\n    uri_param,\r\n    user_agent,\r\n    content_type AS file_type,\r\n    request_time AS response_time,\r\n    refer_domain AS referrer,\r\n    request_size AS request_bytes,\r\n    response_size AS response_bytes,\r\n    hit_info AS cache_status,\r\n    domain AS access_ip\r\nfrom log\r\nwhere\r\n  ('${http_method}' = '' OR method = '${http_method}')\r\n  AND ('${request_url}' = '' OR uri LIKE CONCAT('%', '${request_url}', '%'))\r\n  AND ('${client_ip}' = '' OR client_ip LIKE CONCAT('%', '${client_ip}', '%'))\r\n  AND ('${cache_status}' = '' OR hit_info = '${cache_status}')\r\n  AND ('${http_status}' = '' OR CAST(return_code AS VARCHAR) = '${http_status}')\r\n  AND ('${user_agent}' = '' OR user_agent LIKE CONCAT('%', '${user_agent}', '%'))\r\n  AND ('${referrer}' = '' OR refer_domain LIKE CONCAT('%', '${referrer}', '%'))\r\nlimit 1000",
+          "refId": "A",
+          "totalLogs": 100,
+          "type": "all",
+          "xcol": "",
+          "ycol": ""
+        }
+      ],
+      "title": "Logs",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "logs",
+    "athena",
+    "real-time"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Client IP",
+        "name": "client_ip",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Status",
+        "name": "http_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Request URL (contains)",
+        "name": "request_url",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Min Response Time",
+        "name": "response_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Method",
+        "name": "http_method",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "User Agent",
+        "name": "user_agent",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "HIT, MISS",
+        "label": "Cache Status",
+        "name": "cache_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "",
+        "label": "Referrer",
+        "name": "referrer",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Alibaba CDN Logs - Raw Table - Real-TIme",
+  "uid": "athena-cdn-logs-realtime",
+  "version": 48
+}

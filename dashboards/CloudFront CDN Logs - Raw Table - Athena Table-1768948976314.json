@@ -1,0 +1,366 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 7,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "SELECT\n    approx_distinct(c_ip) AS client_ip,\n    approx_distinct(cs_referer) AS referrer,\n    approx_distinct(cs_method) AS http_method,\n    approx_distinct(regexp_extract(cs_uri_stem, '/live/([^/]+)/', 1)) AS channels,\n    approx_distinct(regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1)) AS long_token,\n    approx_distinct(cs_uri_stem) AS request_url,\n    approx_distinct(sc_status) AS http_status,\n    approx_distinct(x_edge_result_type) AS cache_status,\n    approx_distinct(cs_user_agent) AS user_agent,\n    approx_distinct(sc_content_type) AS content_type,\n    approx_distinct(x_edge_location) AS edge_location\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\nWHERE \n    year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y')\n    AND month >= date_format($__timeFrom(), '%m') AND month <= date_format($__timeTo(), '%m')\n    AND day >= date_format($__timeFrom(), '%d') AND day <= date_format($__timeTo(), '%d')\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n    AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\n    AND (\n      COALESCE('${client_ip}', '') = '' OR POSITION(',' || CAST(c_ip AS VARCHAR) || ',' IN ',' || '${client_ip}' || ',') > 0\n    )\n    AND (\n      COALESCE('${http_method}', '') = '' OR POSITION(',' || CAST(cs_method AS VARCHAR) || ',' IN ',' || '${http_method}' || ',') > 0\n    )\n    AND (\n      COALESCE('${request_url}', '') = '' OR cs_uri_stem LIKE CONCAT('%', '${request_url}', '%')\n    )\n    AND (\n  COALESCE('${request_qs}', '') = ''\n  OR cs_uri_query LIKE CONCAT('%', '${request_qs}', '%')\n)\n    AND (\n      COALESCE('${http_status}', '') = '' OR ',' || '${http_status}' || ',' LIKE '%,' || CAST(sc_status AS VARCHAR) || ',%'\n    )\n    AND (\n      COALESCE('${cache_status}', '') = '' OR POSITION(',' || CAST(x_edge_result_type AS VARCHAR) || ',' IN ',' || '${cache_status}' || ',') > 0\n    )\n    AND (\n      COALESCE('${user_agent}', '') = '' OR POSITION(',' || CAST(cs_user_agent AS VARCHAR) || ',' IN ',' || '${user_agent}' || ',') > 0\n    )\n    AND (\n      COALESCE('${referrer}', '') = '' OR POSITION(',' || CAST(cs_referer AS VARCHAR) || ',' IN ',' || '${referrer}' || ',') > 0\n    )\n    AND (\n  COALESCE('${response_time}', '') = ''\n  OR CAST(time_taken AS DOUBLE) >= CAST('${response_time}' AS DOUBLE)\n)\nLIMIT 10000;",
+          "refId": "A",
+          "table": "access_logs_parquet"
+        }
+      ],
+      "title": "Total Unique Values",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "cf1y36lza90cge"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 223
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cs_uri_stem"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 394
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 37,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "cf1y36lza90cge"
+          },
+          "format": 1,
+          "rawSQL": "SELECT\n  date,\n  time,\n  x_edge_location,\n  sc_bytes,\n  c_ip,\n  cs_method,\n  cs_host,\n  cs_uri_stem,\n  sc_status,\n  cs_referer,\n  cs_user_agent,\n  cs_uri_query,\n  cs_cookie,\n  x_edge_result_type,\n  x_edge_request_id,\n  x_host_header,\n  cs_protocol,\n  cs_bytes,\n  time_taken,\n  x_forwarded_for,\n  ssl_protocol,\n  ssl_cipher,\n  x_edge_response_result_type,\n  cs_protocol_version,\n  fle_status,\n  fle_encrypted_fields,\n  c_port,\n  time_to_first_byte,\n  x_edge_detailed_result_type,\n  sc_content_type,\n  sc_content_len,\n  sc_range_start,\n  sc_range_end,\n  regexp_extract(cs_uri_stem, '/live/([^/]+)/', 1) AS channels,\n  regexp_extract(cs_uri_stem, '/([^/]+)/live/', 1) AS long_token,\n  CASE \n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 1 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 6 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    WHEN date_diff('hour', $__timeFrom(), $__timeTo()) <= 24 THEN date_trunc('minute', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n    ELSE date_trunc('hour', date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s'))\n  END as time_bucket\nFROM \"cdn_logs_cloudfront_partitioned\".\"access_logs_parquet\"\nWHERE \n  year >= date_format($__timeFrom(), '%Y') AND year <= date_format($__timeTo(), '%Y')\n  AND month >= date_format($__timeFrom(), '%m') AND month <= date_format($__timeTo(), '%m')\n  AND day >= date_format($__timeFrom(), '%d') AND day <= date_format($__timeTo(), '%d')\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') >= $__timeFrom()\n  AND date_parse(concat(date, ' ', time), '%Y-%m-%d %H:%i:%s') <= $__timeTo()\nAND (\n  COALESCE('${client_ip}', '') = ''\n  OR POSITION(',' || CAST(c_ip AS VARCHAR) || ',' IN ',' || '${client_ip}' || ',') > 0\n)\nAND (\n  COALESCE('${http_method}', '') = ''\n  OR POSITION(',' || CAST(cs_method AS VARCHAR) || ',' IN ',' || '${http_method}' || ',') > 0\n)\nAND (\n  COALESCE('${request_url}', '') = ''\n  OR cs_uri_stem LIKE CONCAT('%', '${request_url}', '%')\n)\nAND (\n  COALESCE('${request_qs}', '') = ''\n  OR cs_uri_query LIKE CONCAT('%', '${request_qs}', '%')\n)\nAND (\n  COALESCE('${http_status}', '') = ''\n  OR \n    ',' || '${http_status}' || ',' LIKE '%,' || CAST(sc_status AS VARCHAR) || ',%'\n)\nAND (\n  COALESCE('${cache_status}', '') = ''\n  OR POSITION(',' || CAST(x_edge_result_type AS VARCHAR) || ',' IN ',' || '${cache_status}' || ',') > 0\n)\nAND (\n  COALESCE('${user_agent}', '') = ''\n  OR POSITION(',' || CAST(cs_user_agent AS VARCHAR) || ',' IN ',' || '${user_agent}' || ',') > 0\n)\nAND (\n  COALESCE('${referrer}', '') = ''\n  OR POSITION(',' || CAST(cs_referer AS VARCHAR) || ',' IN ',' || '${referrer}' || ',') > 0\n)\nAND (\n  COALESCE('${response_time}', '') = ''\n  OR CAST(time_taken AS DOUBLE) >= CAST('${response_time}' AS DOUBLE)\n)\n\nLIMIT 1000",
+          "refId": "A"
+        }
+      ],
+      "title": "CloudFront Logs (limit to 1000 lines)",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "cdn",
+    "logs",
+    "athena",
+    "cloudfront"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Client IP",
+        "name": "client_ip",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Status",
+        "name": "http_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Request URL (contains)",
+        "name": "request_url",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "7RV2",
+          "value": "7RV2"
+        },
+        "label": "Request QS(contains)",
+        "name": "request_qs",
+        "options": [
+          {
+            "selected": true,
+            "text": "7RV2",
+            "value": "7RV2"
+          }
+        ],
+        "query": "7RV2",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "Min Response Time (seconds)",
+        "name": "response_time",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "HTTP Method",
+        "name": "http_method",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "User Agent",
+        "name": "user_agent",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Hit, Miss, RefreshHit, Error",
+        "label": "Cache Status",
+        "name": "cache_status",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "",
+        "label": "Referrer",
+        "name": "referrer",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "CloudFront CDN Logs - Raw Table - Athena Table",
+  "uid": "cloudfront-cdn-logs-raw",
+  "version": 3
+}
